@@ -75,6 +75,9 @@ public class Server {
 				System.out.println("Received connection packet");
 				clients.add(new ServerClient(packet.getAddress(), packet.getPort()));
 				break;
+			case 0x02:
+				System.out.println("Received activity request");
+				send(new byte[] {0x40, 0x40, 0x02}, address, port);
 			}
 		} else{
 			dump(packet);
