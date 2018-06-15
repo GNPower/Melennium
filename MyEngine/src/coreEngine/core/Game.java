@@ -76,12 +76,17 @@ public class Game {
 		
 		
 		//CONNECT TO SERVER HERE:
+<<<<<<< HEAD
 		Client client = new Client("99.253.248.160", 25565);
+=======
+		//Client client = new Client("99.253.248.160", 8192);
+		Client client = new Client("localhost", 8192);
+>>>>>>> refs/remotes/origin/master
 		if(!client.connect()){
 			
 		}
 		
-		MSDatabase db = MSDatabase.deserializeFromFile("level.pcdb");
+		//MSDatabase db = MSDatabase.deserializeFromFile("level.pcdb");
 		//client.send(db);
 		
 	}
