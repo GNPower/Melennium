@@ -76,7 +76,7 @@ public class Game {
 		
 		
 		//CONNECT TO SERVER HERE:
-		Client client = new Client("localhost", 8192);
+		Client client = new Client("99.253.248.160", 25565);
 		if(!client.connect()){
 			
 		}

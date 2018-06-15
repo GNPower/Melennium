@@ -6,14 +6,14 @@ import java.net.UnknownHostException;
 public class MyEngineServer {
 
 	public static void main(String[] args) {
-		Server server = new Server(8192);
+		Server server = new Server(25565);
 		
 		server.start();
 		
 		InetAddress address = null;
 		
 		try {
-			address = InetAddress.getByName("192.168.0.1");
+			address = InetAddress.getByName("99.253.248.160");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
