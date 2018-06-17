@@ -219,4 +219,75 @@ public class MSArray extends Container{
 		
 		return result;
 	}
+	
+	public String toString(){
+		String result = "";
+		switch(type){
+		case Type.BYTE:
+			result += "[";
+			for(int i = 0; i < data.length; i++){
+				result += data[i];
+				result += ", ";
+			}
+			result += "]";
+			break;
+		case Type.SHORT:
+			result += "[";
+			for(int i = 0; i < shortData.length; i++){
+				result += shortData[i];
+				result += ", ";
+			}
+			result += "]";
+			break;
+		case Type.CHAR:
+			result += "[";
+			for(int i = 0; i < charData.length; i++){
+				result += charData[i];
+				result += ", ";
+			}
+			result += "]";
+			break;
+		case Type.INTEGER:
+			result += "[";
+			for(int i = 0; i < intData.length; i++){
+				result += intData[i];
+				result += ", ";
+			}
+			result += "]";
+			break;
+		case Type.LONG:
+			result += "[";
+			for(int i = 0; i < longData.length; i++){
+				result += longData[i];
+				result += ", ";
+			}
+			result += "]";
+			break;
+		case Type.FLOAT:
+			result += "[";
+			for(int i = 0; i < floatData.length; i++){
+				result += floatData[i];
+				result += ", ";
+			}
+			result += "]";
+			break;
+		case Type.DOUBLE:
+			result += "[";
+			for(int i = 0; i < doubleData.length; i++){
+				result += doubleData[i];
+				result += ", ";
+			}
+			result += "]";
+			break;
+		case Type.BOOLEAN:
+			result += "[";
+			for(int i = 0; i < booleanData.length; i++){
+				result += booleanData[i];
+				result += ", ";
+			}
+			result += "]";
+			break;
+		}
+		return result;
+	}
 }

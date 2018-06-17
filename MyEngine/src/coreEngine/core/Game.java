@@ -1,7 +1,9 @@
 package coreEngine.core;
 
 import coreEngine.screen.Window;
-import net.Client;
+import net.test1.Client;
+import net.test1.ServerPlayer;
+import net.test2.GameClient;
 import renderEngine.entities.Camera;
 import renderEngine.entities.Entity;
 import renderEngine.entities.Player;
@@ -13,7 +15,6 @@ import renderEngine.rendering.MasterRenderer;
 import renderEngine.terrains.Terrain;
 import renderEngine.terrains.TerrainManager;
 import renderEngine.textures.Texture2D;
-import serialization.containers.MSDatabase;
 import util.RenderUtil;
 import util.colours.ColourUtil;
 import util.interfacing.accessories.KeyboardInput;
@@ -49,6 +50,10 @@ public class Game {
 	
 	private double FPS;
 	private boolean isRunning;
+	
+	//SERVER DATA HERE:
+	//private GameClient client;
+	Client client = new Client(this, "99.253.248.160", 25565);
 
 	public Game(Window window){
 		this.window = window;
@@ -74,17 +79,19 @@ public class Game {
 		Tmanager.addTerrain(terrain);
 		fern.getModel().getTexture().setHasTransparency(true);
 		
+		player.setName("Graham");
 		
-		//CONNECT TO SERVER HERE:
-<<<<<<< HEAD
-		Client client = new Client("99.253.248.160", 25565);
-=======
-		//Client client = new Client("99.253.248.160", 8192);
-		Client client = new Client("localhost", 8192);
->>>>>>> refs/remotes/origin/master
-		if(!client.connect()){
-			
+		//CONNECT TO SERVER01 HERE:
+		
+		//Client client = new Client("localhost", 8192);
+		if(!client.connect("graham")){
+			ServerPlayer.setPlayerModel(model);
 		}
+		
+		//CONNECT TO SERVER02 HERE:
+//		client = new GameClient(this, "localhost");
+//		client.start();
+//		client.send("ping".getBytes());
 		
 		//MSDatabase db = MSDatabase.deserializeFromFile("level.pcdb");
 		//client.send(db);
@@ -104,11 +111,12 @@ public class Game {
 		//entity.increaseRotation(0, 0.05f, 0);
 		//player.move(camera);
 		camera.move();		
-		player.move(terrain);
+		player.move(terrain);		
 		//System.out.println(entity.getPosition());
 	}
 	
 	private void render(){
+		client.update();
 		Tmanager.render();
 		renderer.processEntity(player);
 		renderer.processEntity(fern);
@@ -196,5 +204,9 @@ public class Game {
 
 	public double getFPS() {
 		return FPS;
+	}
+	
+	public Player getPlayer(){
+		return player;
 	}
 }

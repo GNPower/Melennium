@@ -9,6 +9,7 @@ public class Entity {
 	private int textureIndex = 0;
 	private Vector3f position, rotation;
 	private float scale;
+	private String name;
 
 	public Entity(Model model, Vector3f position, Vector3f rotation, float scale) {
 		this.model = model;
@@ -91,5 +92,13 @@ public class Entity {
 
 	public void setScale(float scale) {
 		this.scale = scale;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

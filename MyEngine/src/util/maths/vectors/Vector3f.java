@@ -155,4 +155,8 @@ public class Vector3f {
 	public String toString(){
 		return "X: " + this.x + "	Y: " + this.y + "	Z: " + this.z;			
 	}
+	
+	public float[] toArray(){
+		return new float[] {this.x, this.y, this.z};
+	}
 }

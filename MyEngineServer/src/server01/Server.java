@@ -1,14 +1,16 @@
-package server;
+package server01;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import serialization.Type;
+import serialization.containers.MSArray;
 import serialization.containers.MSDatabase;
 import serialization.containers.MSField;
 import serialization.containers.MSObject;
@@ -23,7 +25,8 @@ public class Server {
 	private final int MAX_PACKET_SIZE = 1024;
 	private byte[] receivedDataBuffer = new byte[MAX_PACKET_SIZE * 10];
 	
-	private Set<ServerClient> clients = new HashSet<ServerClient>();
+	//private Map<InetAddress, ServerClient> clients = new HashMap<InetAddress, ServerClient>();
+	private Hashtable<InetAddress, ServerClient> clients = new Hashtable<InetAddress, ServerClient>();
 	
 	//starts a server with the passed in port
 	public Server(int port){
@@ -47,6 +50,25 @@ public class Server {
 		}, "MilenniumServer-Receiver");
 		listenThread.start();
 		System.out.println("Server is listening...");
+		
+		runServer();
+	}
+	
+	private void runServer(){		
+		while(listening){
+			MSDatabase database = new MSDatabase("serverUD");
+			for(ServerClient client : clients.values()){
+				if(!client.isSet)
+					continue;
+				database.addObject(client.getUpdate());
+			}			
+			//dump(database);
+			if(!database.objects.isEmpty()){
+				byte[] data = new byte[database.getSize()];
+				database.getBytes(data, 0);
+				sendToAllClients(data);
+			}
+		}
 	}
 	
 	private void listen(){
@@ -68,25 +90,36 @@ public class Server {
 		
 		if(new String(data, 0, 4).equals("MSDB")){
 			MSDatabase database = MSDatabase.deserialize(data);
-			process(database);
+			process(address, database);
 		}else if (data[0] == 0x40 && data[1] == 0x40){
 			switch(data[2]){
 			case 0x01:
 				System.out.println("Received connection packet");
-				clients.add(new ServerClient(packet.getAddress(), packet.getPort()));
+				clients.put(address, new ServerClient(address, port));
+				send(new byte[] {0x40, 0x40, 0x01}, address, port);
 				break;
 			case 0x02:
 				System.out.println("Received activity request");
 				send(new byte[] {0x40, 0x40, 0x02}, address, port);
+				break;
 			}
 		} else{
 			dump(packet);
 		}
 	}
 	
-	private void process(MSDatabase database){		
+	private void process(InetAddress address, MSDatabase database){		
 		System.out.println("Received Database!");
 		dump(database);
+		String name = database.getName();
+		switch(name){
+		case "playerID":
+			clients.get(address).setPlayerID(database);
+			break;
+		case "playerUD":
+			clients.get(address).update(database);
+			break;
+		}
 	}
 	
 	public void send(byte[] data, InetAddress address, int port){
@@ -97,6 +130,39 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void sendToAllClients(byte[] data){
+		assert(socket.isConnected());
+		DatagramPacket packet = new DatagramPacket(data, data.length);;
+		
+		Iterator<Entry<InetAddress, ServerClient>> iterator = clients.entrySet().iterator();
+		while(iterator.hasNext()){
+			Entry<InetAddress, ServerClient> client = iterator.next();
+			packet.setAddress(client.getKey());
+			packet.setPort(client.getValue().getPort());
+			try {
+				socket.send(packet);
+				//System.out.println("sending packet");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+//		for(ServerClient client : clients.values()){
+//			
+//			packet.setAddress(client.getAddress());
+//			packet.setPort(client.getPort());
+//			try {
+//				socket.send(packet);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			System.out.println("sent data");
+//		}
+		
+		
+//TODO: send to all clients
 	}
 	
 	private void dump(DatagramPacket packet){
@@ -164,6 +230,13 @@ public class Server {
 					break;
 				}
 				System.out.println("\t\t\tData: " + data);
+			}
+			System.out.println();
+			for(MSArray array : object.arrays){
+				System.out.println("\t\tArray:");
+				System.out.println("\t\t\tName: " + array.getName());
+				System.out.println("\t\t\tSize: " + array.getSize());
+				array.toString();
 			}
 			System.out.println();
 		}

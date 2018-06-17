@@ -37,6 +37,11 @@ public class MSDatabase extends Container{
 		objectCount = (short) objects.size();
 	}
 	
+	public void clearDatabase(){
+		objects.clear();
+		//objectCount = (short) 0;
+	}
+	
 	public int getSize(){
 		return size;
 	}
