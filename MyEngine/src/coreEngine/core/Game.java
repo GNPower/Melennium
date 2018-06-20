@@ -111,7 +111,7 @@ public class Game {
 		//entity.increaseRotation(0, 0.05f, 0);
 		//player.move(camera);
 		camera.move();		
-		player.move(terrain);		
+		player.move(terrain);	
 		//System.out.println(entity.getPosition());
 	}
 	
@@ -120,6 +120,7 @@ public class Game {
 		Tmanager.render();
 		renderer.processEntity(player);
 		renderer.processEntity(fern);
+		client.renderPlayers(renderer);
 		//renderer.processEntity(player);
 		renderer.render(light, camera);
 		window.render();

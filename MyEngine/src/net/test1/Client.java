@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import coreEngine.core.Game;
+import renderEngine.rendering.MasterRenderer;
 import serialization.Type;
 import serialization.containers.MSArray;
 import serialization.containers.MSDatabase;
@@ -121,7 +122,7 @@ public class Client {
 			MSObject entity = database.objects.get(i);
 			if(entity.getName().equalsIgnoreCase(username)){
 				System.out.println("same user");
-				//continue;
+				continue;
 			}
 			if(players.containsKey(entity.getName())){
 				players.get(entity.getName()).update(entity);
@@ -297,5 +298,11 @@ public class Client {
 			System.out.println();
 		}
 		System.out.println("--------------------------------");
+	}
+	
+	public void renderPlayers(MasterRenderer renderer){
+		for(ServerPlayer player : players.values()){
+			renderer.processEntity(player);
+		}
 	}
 }
