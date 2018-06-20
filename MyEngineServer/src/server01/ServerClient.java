@@ -23,6 +23,7 @@ public class ServerClient {
 	public volatile boolean isSet = false;
 	
 	public ServerClient(InetAddress address, int port){
+		System.out.println("Server Has " + userIDCounter + " Connected Clients");
 		userID = userIDCounter++;
 		this.address = address;
 		this.port = port;

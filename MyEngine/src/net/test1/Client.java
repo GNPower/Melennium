@@ -108,8 +108,8 @@ public class Client {
 	}
 	
 	private void process(MSDatabase database){
-		System.out.println("Received Database!");
-		dump(database);
+		//System.out.println("Received Database!");
+		//dump(database);
 		switch(database.getName()){
 		case "serverUD":
 			updateData(database);
@@ -121,14 +121,15 @@ public class Client {
 		for(int i = 0; i < database.objects.size(); i++){
 			MSObject entity = database.objects.get(i);
 			if(entity.getName().equalsIgnoreCase(username)){
-				System.out.println("same user");
+			//	System.out.println("same user");
 				continue;
 			}
 			if(players.containsKey(entity.getName())){
 				players.get(entity.getName()).update(entity);
 			}else{
+				System.out.println("New Player Added");
 				players.put(entity.getName(), 
-				new ServerPlayer(entity.findArray("positions").floatData, 
+				new ServerPlayer(entity.getName(), entity.findArray("positions").floatData, 
 				entity.findArray("rotations").floatData));								
 			}
 		}
@@ -304,5 +305,9 @@ public class Client {
 		for(ServerPlayer player : players.values()){
 			renderer.processEntity(player);
 		}
+	}
+	
+	public void addPlayer(ServerPlayer player){
+		players.put(player.getName(), player);
 	}
 }

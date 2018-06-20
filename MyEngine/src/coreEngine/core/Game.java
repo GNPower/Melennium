@@ -54,6 +54,7 @@ public class Game {
 	//SERVER DATA HERE:
 	//private GameClient client;
 	Client client = new Client(this, "99.253.248.160", 25565);
+	ServerPlayer sp;
 
 	public Game(Window window){
 		this.window = window;
@@ -84,9 +85,11 @@ public class Game {
 		//CONNECT TO SERVER01 HERE:
 		
 		//Client client = new Client("localhost", 8192);
-		if(!client.connect("graham")){
-			ServerPlayer.setPlayerModel(model);
+		ServerPlayer.setPlayerModel(model);
+		if(!client.connect("graham")){			
 		}
+		sp = new ServerPlayer("bob", new float[]{10, 0, 10}, new float[]{0,0,0});
+		client.addPlayer(sp);
 		
 		//CONNECT TO SERVER02 HERE:
 //		client = new GameClient(this, "localhost");
@@ -112,6 +115,7 @@ public class Game {
 		//player.move(camera);
 		camera.move();		
 		player.move(terrain);	
+		client.update();
 		//System.out.println(entity.getPosition());
 	}
 	
@@ -121,6 +125,7 @@ public class Game {
 		renderer.processEntity(player);
 		renderer.processEntity(fern);
 		client.renderPlayers(renderer);
+		//renderer.processEntity(sp);
 		//renderer.processEntity(player);
 		renderer.render(light, camera);
 		window.render();

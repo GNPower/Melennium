@@ -7,11 +7,12 @@ import util.maths.vectors.Vector3f;
 
 public class ServerPlayer extends Player{
 
-	private String username;
+	private String username;// = "namem";
 	private static Model playerModel;
 	
-	public ServerPlayer(float[] pos, float[] rot) {	
-		super(playerModel, new Vector3f(pos[0], pos[1], pos[2]), new Vector3f(rot[0], rot[1], rot[2]), 1);		
+	public ServerPlayer(String username, float[] pos, float[] rot) {	
+		super(playerModel, new Vector3f(pos[0], pos[1], pos[2]), new Vector3f(rot[0], rot[1], rot[2]), 1);	
+		this.username = username;
 	}
 	
 	public void update(MSObject object){
