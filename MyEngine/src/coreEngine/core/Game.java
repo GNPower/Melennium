@@ -86,8 +86,8 @@ public class Game {
 		
 		//Client client = new Client("localhost", 8192);
 		ServerPlayer.setPlayerModel(model);
-		//if(!client.connect("graham")){			
-		//}
+		if(!client.connect("graham")){			
+		}
 		sp = new ServerPlayer("bob", new float[]{10, 0, 10}, new float[]{0,0,0});
 		client.addPlayer(sp);
 		
