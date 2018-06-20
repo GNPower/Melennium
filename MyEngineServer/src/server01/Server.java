@@ -95,7 +95,7 @@ public class Server {
 			switch(data[2]){
 			case 0x01:
 				System.out.println("Received connection packet");
-				clients.put(address, new ServerClient(address, port));
+				clients.put(address, new ServerClient(address, port));				
 				send(new byte[] {0x40, 0x40, 0x01}, address, port);
 				break;
 			case 0x02:
@@ -115,6 +115,13 @@ public class Server {
 		switch(name){
 		case "playerID":
 			clients.get(address).setPlayerID(database);
+			System.out.println("Received Player ID!");
+			System.out.println("Connected Clients By Username Are:");
+			int i = 1;
+			for(ServerClient client : clients.values()) {
+				System.out.println("Client " + i + ":  " + client.username);
+				i++;
+			}
 			break;
 		case "playerUD":
 			clients.get(address).update(database);
@@ -139,6 +146,8 @@ public class Server {
 		Iterator<Entry<InetAddress, ServerClient>> iterator = clients.entrySet().iterator();
 		while(iterator.hasNext()){
 			Entry<InetAddress, ServerClient> client = iterator.next();
+			if(!client.getValue().isSet)
+				continue;
 			packet.setAddress(client.getKey());
 			packet.setPort(client.getValue().getPort());
 			try {
