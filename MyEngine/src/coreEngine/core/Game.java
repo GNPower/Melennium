@@ -80,7 +80,7 @@ public class Game {
 		Tmanager.addTerrain(terrain);
 		fern.getModel().getTexture().setHasTransparency(true);
 		
-		String username = "Graham" + (System.nanoTime() / 1000000000);
+		String username = "Graham" + (System.nanoTime() / 100000000);
 		player.setName(username);
 		System.out.println("Username is: " + username);
 		
@@ -88,7 +88,7 @@ public class Game {
 		
 		//Client client = new Client("localhost", 8192);
 		ServerPlayer.setPlayerModel(model);
-		if(!client.connect("graham")){			
+		if(!client.connect(username)){			
 		}
 		sp = new ServerPlayer("bob", new float[]{10, 0, 10}, new float[]{0,0,0});
 		//client.addPlayer(sp);
