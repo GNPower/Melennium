@@ -220,7 +220,7 @@ public class MSArray extends Container{
 		return result;
 	}
 	
-	public String toString(){
+	public String getString(){
 		String result = "";
 		switch(type){
 		case Type.BYTE:

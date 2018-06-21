@@ -88,7 +88,10 @@ public class Game {
 		
 		//Client client = new Client("localhost", 8192);
 		ServerPlayer.setPlayerModel(model);
-		if(!client.connect(username)){			
+		if(!client.connect(username)){		
+			System.out.println("Failed to connect to server! Loading into local session");
+		}else {
+			System.out.println("Connected to server!");
 		}
 		sp = new ServerPlayer("bob", new float[]{10, 0, 10}, new float[]{0,0,0});
 		//client.addPlayer(sp);

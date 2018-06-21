@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -109,7 +110,7 @@ public class Client {
 	
 	private void process(MSDatabase database){
 		//System.out.println("Received Database!");
-		//dump(database);
+		dump(database);
 		switch(database.getName()){
 		case "serverUD":
 			updateData(database);
@@ -153,7 +154,8 @@ public class Client {
 			return false;
 		}
 		sendConnectionPacket();			
-		receiveConnectionPacket();
+		if(!receiveConnectionPacket())
+			return false;
 		sendPlayerID(username);
 		
 		if(!active){
@@ -196,14 +198,19 @@ public class Client {
 		send(writer.getBuffer());
 	}
 	
-	private void receiveConnectionPacket(){
+	private boolean receiveConnectionPacket(){
 		DatagramPacket packet = new DatagramPacket(new byte[4], 3);
 		try {
+			socket.setSoTimeout(5000);
 			socket.receive(packet);
+			socket.setSoTimeout(0);
+		} catch (SocketTimeoutException s) {
+			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		process(packet);				
+		process(packet);
+		return true;
 	}
 	
 	private void sendPlayerID(String username){
@@ -243,7 +250,7 @@ public class Client {
 		return ping;
 	}
 	
-	private void dump(MSDatabase database){
+	private static void dump(MSDatabase database){
 		System.out.println("--------------------------------");		
 		System.out.println("           MSDatabase           ");
 		System.out.println("--------------------------------");
@@ -294,12 +301,18 @@ public class Client {
 				System.out.println("\t\tArray:");
 				System.out.println("\t\t\tName: " + array.getName());
 				System.out.println("\t\t\tSize: " + array.getSize());
-				array.toString();
+				System.out.println("\t\t\tData: " + array.getString());
+			}
+			for(MSString string : object.strings) {
+				System.out.println("\t\tString:");
+				System.out.println("\t\t\tName: " + string.getName());
+				System.out.println("\t\t\tData: " + string.getString());
 			}
 			System.out.println();
 		}
 		System.out.println("--------------------------------");
 	}
+
 	
 	public void renderPlayers(MasterRenderer renderer){
 		for(ServerPlayer player : players.values()){

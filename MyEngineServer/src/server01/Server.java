@@ -14,6 +14,7 @@ import serialization.containers.MSArray;
 import serialization.containers.MSDatabase;
 import serialization.containers.MSField;
 import serialization.containers.MSObject;
+import serialization.containers.MSString;
 
 public class Server {
 
@@ -195,7 +196,7 @@ public class Server {
 		System.out.println("--------------------------------");
 	}
 	
-	private void dump(MSDatabase database){
+	private static void dump(MSDatabase database){
 		System.out.println("--------------------------------");		
 		System.out.println("           MSDatabase           ");
 		System.out.println("--------------------------------");
@@ -246,12 +247,18 @@ public class Server {
 				System.out.println("\t\tArray:");
 				System.out.println("\t\t\tName: " + array.getName());
 				System.out.println("\t\t\tSize: " + array.getSize());
-				array.toString();
+				System.out.println("\t\t\tData: " + array.getString());
+			}
+			for(MSString string : object.strings) {
+				System.out.println("\t\tString:");
+				System.out.println("\t\t\tName: " + string.getName());
+				System.out.println("\t\t\tData: " + string.getString());
 			}
 			System.out.println();
 		}
 		System.out.println("--------------------------------");
 	}
+
 
 	public int getPort() {
 		return port;
