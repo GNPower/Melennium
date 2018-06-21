@@ -26,7 +26,7 @@ public class Server {
 	private byte[] receivedDataBuffer = new byte[MAX_PACKET_SIZE * 10];
 	
 	//private Map<InetAddress, ServerClient> clients = new HashMap<InetAddress, ServerClient>();
-	private Hashtable<InetAddress, ServerClient> clients = new Hashtable<InetAddress, ServerClient>();
+	private Hashtable<String, ServerClient> clients = new Hashtable<String, ServerClient>();
 	
 	//starts a server with the passed in port
 	public Server(int port){
@@ -90,12 +90,13 @@ public class Server {
 		
 		if(new String(data, 0, 4).equals("MSDB")){
 			MSDatabase database = MSDatabase.deserialize(data);
-			process(address, database);
+			process(Address.createAddressID(address, port), database);
 		}else if (data[0] == 0x40 && data[1] == 0x40){
 			switch(data[2]){
 			case 0x01:
 				System.out.println("Received connection packet");
-				clients.put(address, new ServerClient(address, port));				
+				Address addressID = new Address(address, port);
+				clients.put(addressID.getId(), new ServerClient(addressID));				
 				send(new byte[] {0x40, 0x40, 0x01}, address, port);
 				break;
 			case 0x02:
@@ -108,13 +109,13 @@ public class Server {
 		}
 	}
 	
-	private void process(InetAddress address, MSDatabase database){		
+	private void process(String addressID, MSDatabase database){		
 		System.out.println("Received Database!");
 		dump(database);
 		String name = database.getName();
 		switch(name){
 		case "playerID":
-			clients.get(address).setPlayerID(database);
+			clients.get(addressID).setPlayerID(database);
 			System.out.println("Received Player ID!");
 			System.out.println("Connected Clients By Username Are:");
 			int i = 1;
@@ -124,7 +125,7 @@ public class Server {
 			}
 			break;
 		case "playerUD":
-			clients.get(address).update(database);
+			clients.get(addressID).update(database);
 			break;
 		}
 	}
@@ -143,12 +144,12 @@ public class Server {
 		assert(socket.isConnected());
 		DatagramPacket packet = new DatagramPacket(data, data.length);;
 		
-		Iterator<Entry<InetAddress, ServerClient>> iterator = clients.entrySet().iterator();
+		Iterator<Entry<String, ServerClient>> iterator = clients.entrySet().iterator();
 		while(iterator.hasNext()){
-			Entry<InetAddress, ServerClient> client = iterator.next();
+			Entry<String, ServerClient> client = iterator.next();
 			if(!client.getValue().isSet)
 				continue;
-			packet.setAddress(client.getKey());
+			packet.setAddress(client.getValue().getAddress());
 			packet.setPort(client.getValue().getPort());
 			try {
 				socket.send(packet);

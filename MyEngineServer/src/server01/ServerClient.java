@@ -9,9 +9,8 @@ import serialization.containers.MSObject;
 public class ServerClient {
 
 	public int userID;
-	private volatile InetAddress address;
-	private volatile int port;
 	public boolean connected = false;
+	private volatile Address storedAddress;
 	
 	private static int userIDCounter = 1;
 	
@@ -22,12 +21,11 @@ public class ServerClient {
 	public volatile float scale;
 	public volatile boolean isSet = false;
 	
-	public ServerClient(InetAddress address, int port){
+	public ServerClient(Address address){
 		System.out.println("Server Has " + userIDCounter + " Connected Clients");
 		userID = userIDCounter++;
-		this.address = address;
-		this.port = port;
 		connected = true;
+		storedAddress = address;
 	}
 	
 	public void setPlayerID(MSDatabase database){
@@ -65,10 +63,14 @@ public class ServerClient {
 	}
 	
 	public InetAddress getAddress(){
-		return address;
+		return storedAddress.getAddress();
 	}
 	
 	public int getPort(){
-		return port;
+		return storedAddress.getPort();
+	}
+	
+	public String getAddressId() {
+		return storedAddress.getId();
 	}
 }
