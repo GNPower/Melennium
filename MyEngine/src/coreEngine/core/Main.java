@@ -1,13 +1,14 @@
 package coreEngine.core;
 
+import coreEngine.launcher.Launcher;
 import coreEngine.screen.Window;
-import util.loaders.LODLoader;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		
+		Launcher launcher = new Launcher();
+		launcher.run(args);
 		
 		
 		Window window = new Window("Test Engine 2.0", 1280, 16, 9);		
