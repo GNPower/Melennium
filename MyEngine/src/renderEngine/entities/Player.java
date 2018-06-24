@@ -2,6 +2,8 @@ package renderEngine.entities;
 
 import renderEngine.models.Model;
 import renderEngine.terrains.Terrain;
+import serialization.containers.MSArray;
+import serialization.containers.MSObject;
 import util.interfacing.accessories.KeyboardInput;
 import util.interfacing.accessories.Keys;
 import util.maths.vectors.Vector3f;
@@ -72,5 +74,14 @@ public class Player extends Entity{
 		if(KeyboardInput.getKey(Keys.KEY_SPACE)){
 			jump();
 		}
+	}
+	
+	
+	@Override
+	public MSObject serialize() {
+		MSObject object = new MSObject("Player");
+		object.addArray(MSArray.Float("positions", super.getPosition().toArray()));
+		object.addArray(MSArray.Float("rotations", super.getRotation().toArray()));
+		return object;
 	}
 }

@@ -85,6 +85,9 @@ public class Client {
 			process(client.getValue());
 		}				
 		receivedPackets.clear();
+		MSDatabase playerData = new MSDatabase("playerUD");
+		playerData.addObject(game.getPlayer().serialize());
+		send(playerData);
 	}
 	
 	private void process(DatagramPacket packet){
@@ -110,7 +113,7 @@ public class Client {
 	
 	private void process(MSDatabase database){
 		//System.out.println("Received Database!");
-		dump(database);
+		//dump(database);
 		switch(database.getName()){
 		case "serverUD":
 			updateData(database);

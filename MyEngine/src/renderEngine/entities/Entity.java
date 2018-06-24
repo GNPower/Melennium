@@ -1,6 +1,8 @@
 package renderEngine.entities;
 
 import renderEngine.models.Model;
+import serialization.containers.MSArray;
+import serialization.containers.MSObject;
 import util.maths.vectors.Vector3f;
 
 public class Entity {
@@ -100,5 +102,12 @@ public class Entity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public MSObject serialize() {
+		MSObject object = new MSObject(name);
+		object.addArray(MSArray.Float("positions", position.toArray()));
+		object.addArray(MSArray.Float("rotations", rotation.toArray()));
+		return object;
 	}
 }
