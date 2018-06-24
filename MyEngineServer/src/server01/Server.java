@@ -6,8 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 import serialization.Type;
 import serialization.containers.MSArray;
@@ -111,8 +109,8 @@ public class Server {
 	}
 	
 	private void process(String addressID, MSDatabase database){		
-		System.out.println("Received Database!");
-		dump(database);
+		//System.out.println("Received Database!");
+		//dump(database);
 		String name = database.getName();
 		switch(name){
 		case "playerID":
@@ -126,6 +124,8 @@ public class Server {
 			}
 			break;
 		case "playerUD":
+			if(clients.get(addressID) == null)
+				return;
 			clients.get(addressID).update(database);
 			break;
 		}
@@ -143,35 +143,37 @@ public class Server {
 	
 	public void sendToAllClients(byte[] data){
 		assert(socket.isConnected());
-		DatagramPacket packet = new DatagramPacket(data, data.length);;
+		DatagramPacket packet = new DatagramPacket(data, data.length);
 		
-		Iterator<Entry<String, ServerClient>> iterator = clients.entrySet().iterator();
-		while(iterator.hasNext()){
-			Entry<String, ServerClient> client = iterator.next();
-			if(!client.getValue().isSet)
-				continue;
-			packet.setAddress(client.getValue().getAddress());
-			packet.setPort(client.getValue().getPort());
-			try {
-				socket.send(packet);
-				//System.out.println("sending packet");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-//		for(ServerClient client : clients.values()){
-//			
-//			packet.setAddress(client.getAddress());
-//			packet.setPort(client.getPort());
+//		Iterator<Entry<String, ServerClient>> iterator = clients.entrySet().iterator();
+//		while(iterator.hasNext()){
+//			Entry<String, ServerClient> client = iterator.next();
+//			if(!client.getValue().isSet)
+//				continue;
+//			packet.setAddress(client.getValue().getAddress());
+//			packet.setPort(client.getValue().getPort());
 //			try {
 //				socket.send(packet);
+//				//System.out.println("sending packet");
 //			} catch (IOException e) {
 //				e.printStackTrace();
 //			}
-//			System.out.println("sent data");
 //		}
 		
+		ServerClient[] list = new ServerClient[clients.size()];
+		clients.values().toArray(list);
+		
+		for(int i = 0; i < list.length; i++) {
+			if(!list[i].isSet)
+				continue;
+			packet.setAddress(list[i].getAddress());
+			packet.setPort(list[i].getPort());
+			try {
+				socket.send(packet);
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 //TODO: send to all clients
 	}
