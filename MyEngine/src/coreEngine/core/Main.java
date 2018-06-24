@@ -8,7 +8,8 @@ public class Main {
 	public static void main(String[] args) {
 		
 		Launcher launcher = new Launcher();
-		launcher.run(args);
+		if(!launcher.run(args))
+			return;
 		
 		
 		Window window = new Window("Test Engine 2.0", 1280, 16, 9);		

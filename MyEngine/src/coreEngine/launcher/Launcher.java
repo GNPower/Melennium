@@ -15,8 +15,9 @@ public class Launcher extends Application{
 	public Launcher() {
 	}
 	
-	public void run(String[] args) {
+	public boolean run(String[] args) {
 		launch(args);
+		return false;
 	}
 
 	@Override
@@ -25,6 +26,7 @@ public class Launcher extends Application{
 		
 		button = new Button();
 		button.setText("click me");
+		button.setOnAction(e -> System.out.println("Click me again daddy"));
 		
 		StackPane layout = new StackPane();
 		layout.getChildren().add(button);
