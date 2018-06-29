@@ -169,7 +169,7 @@ public class Game {
 				
 				if(frameCounter >= Time.SECOND){
 					FPS = frames;
-					System.out.println(frames + " Fps");
+//					System.out.println(frames + " Fps");
 					frames = 0;
 					frameCounter = 0;
 				}
