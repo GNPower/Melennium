@@ -16,7 +16,9 @@ public class Main extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		Parent root = FXMLLoader.load(getClass().getResource("launcher.fxml"));		
 		primaryStage.setTitle("Millennium Launcher");
-		primaryStage.setScene(new Scene(root, 1280, 720));
+		Scene scene = new Scene(root, 1280, 720);
+		scene.getStylesheets().add(LauncherUtils.getStyleURL("Orion"));
+		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 }
