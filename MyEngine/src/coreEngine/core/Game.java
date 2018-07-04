@@ -3,7 +3,6 @@ package coreEngine.core;
 import coreEngine.screen.Window;
 import net.test1.Client;
 import net.test1.ServerPlayer;
-import net.test2.GameClient;
 import renderEngine.entities.Camera;
 import renderEngine.entities.Entity;
 import renderEngine.entities.Player;
@@ -53,7 +52,8 @@ public class Game {
 	
 	//SERVER DATA HERE:
 	//private GameClient client;
-	Client client = new Client(this, "99.253.248.160", 25565);
+	//Client client = new Client(this, "99.253.248.160", 25565);
+	Client client = new Client(this, "localhost", 25565);
 	ServerPlayer sp;
 
 	public Game(Window window){

@@ -6,6 +6,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import serialization.Type;
 import serialization.containers.MSArray;
@@ -15,6 +17,8 @@ import serialization.containers.MSObject;
 import serialization.containers.MSString;
 
 public class Server {
+	
+	public static final int SECOND = 1000000000; //1 seconds in nano seconds
 
 	private int port;
 	private Thread listenThread;
@@ -56,11 +60,23 @@ public class Server {
 	private void runServer(){		
 		while(listening){
 			MSDatabase database = new MSDatabase("serverUD");
-			for(ServerClient client : clients.values()){
+			Iterator<Entry<String, ServerClient>> iterator = clients.entrySet().iterator();
+			while(iterator.hasNext()) {
+				ServerClient client = iterator.next().getValue();
+				double diff = (System.nanoTime() / SECOND) - client.getLastConnectionConfirmation();
+				System.out.println("diff: " + diff);
+				if(diff > 5.0) {
+					System.out.println("client removed");
+					iterator.remove();
+					continue;
+				}else if(diff >= 2.0) {
+					send(new byte[] {0x40, 0x40, 0x03}, client.getAddress(), client.getPort());
+				}
+
 				if(!client.isSet)
 					continue;
 				database.addObject(client.getUpdate());
-			}			
+			}		
 			//dump(database);
 			if(!database.objects.isEmpty()){
 				byte[] data = new byte[database.getSize()];
@@ -68,6 +84,18 @@ public class Server {
 				sendToAllClients(data);
 			}
 		}
+//		for(ServerClient client : clients.values()){
+//		double diff = (System.nanoTime() / SECOND) - client.getLastConnectionConfirmation();
+//		if(diff >= 2.0) {
+//			send(new byte[] {0x40, 0x40, 0x03}, client.getAddress(), client.getPort());
+//		}else if(diff > 5.0) {
+//			//TODO: change loop to iterator to avoid concurrentMdoificationException
+//			clients.remove(client);
+//		}
+//		if(!client.isSet)
+//			continue;
+//		database.addObject(client.getUpdate());
+//	}	
 	}
 	
 	private void listen(){
@@ -95,13 +123,17 @@ public class Server {
 			case 0x01:
 				System.out.println("Received connection packet");
 				Address addressID = new Address(address, port);
-				clients.put(addressID.getId(), new ServerClient(addressID));				
+				clients.put(addressID.getId(), new ServerClient(addressID));
+				clients.get(addressID.getId()).confirmConnection(System.nanoTime() / SECOND);
 				send(new byte[] {0x40, 0x40, 0x01}, address, port);
 				break;
 			case 0x02:
 				System.out.println("Received activity request");
 				send(new byte[] {0x40, 0x40, 0x02}, address, port);
 				break;
+			case 0x03:
+				System.out.println("client confirmed");
+				clients.get(Address.createAddressID(address, port)).confirmConnection(System.nanoTime() / SECOND);
 			}
 		} else{
 			dump(packet);

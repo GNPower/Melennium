@@ -5,7 +5,6 @@ import java.util.List;
 
 import renderEngine.entities.Camera;
 import renderEngine.models.Vertex;
-import renderEngine.terrains.Terrain;
 import util.loaders.LODLoader;
 import util.maths.vectors.Vector3f;
 

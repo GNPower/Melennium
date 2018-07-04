@@ -1,13 +1,10 @@
 package renderEngine.entities;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 
 import coreEngine.screen.Window;
 import util.interfacing.accessories.KeyboardInput;
 import util.interfacing.accessories.Keys;
-import util.interfacing.accessories.MouseInput;
 import util.maths.matrices.Matrix4f;
 import util.maths.vectors.Vector3f;
 

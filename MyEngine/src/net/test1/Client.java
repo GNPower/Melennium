@@ -22,11 +22,13 @@ import serialization.containers.MSField;
 import serialization.containers.MSObject;
 import serialization.containers.MSString;
 import util.dataStructures.BinaryWriter;
+import util.time.Time;
 
 public class Client {
 	
 	private final static byte[] PACKET_HEADER = new byte[] {0x40, 0x40};
 	private final static byte PACKET_TPYE_CONNECT = 0x01;
+	private final static byte PACKET_TYPE_CONFIRMATION = 0x03;
 	private final int MAX_PACKET_SIZE = 1024;
 
 	public enum Error {
@@ -41,6 +43,7 @@ public class Client {
 	private InetAddress serverAddress;
 	private DatagramSocket socket;
 	private boolean active = false;
+	private double serverLastConfirmed = 0;
 	private int ping;
 	
 	private Hashtable<InetAddress, DatagramPacket> receivedPackets = new Hashtable<InetAddress, DatagramPacket>();
@@ -85,6 +88,10 @@ public class Client {
 			process(client.getValue());
 		}				
 		receivedPackets.clear();
+		if((System.nanoTime() / Time.SECOND) - serverLastConfirmed > 5.0) {
+			System.out.println("Error server disconnected");
+			//TODO: handle leaving the server
+		}
 		MSDatabase playerData = new MSDatabase("playerUD");
 		playerData.addObject(game.getPlayer().serialize());
 		send(playerData);
@@ -106,6 +113,10 @@ public class Client {
 				break;
 			case 0x02:
 				System.out.println("Server is active!");
+				break;
+			case 0x03:
+				serverLastConfirmed = (System.nanoTime() / Time.SECOND);
+				sendConnectionConfirmation();
 				break;
 			}
 		}
@@ -156,9 +167,10 @@ public class Client {
 			errorCode = Error.SOCKET_EXCEPTION;
 			return false;
 		}
-		sendConnectionPacket();			
+		sendConnectionPacket();				
 		if(!receiveConnectionPacket())
 			return false;
+		serverLastConfirmed = (System.nanoTime() / Time.SECOND);
 		sendPlayerID(username);
 		
 		if(!active){
@@ -198,6 +210,13 @@ public class Client {
 		BinaryWriter writer = new BinaryWriter();
 		writer.write(PACKET_HEADER);
 		writer.write(PACKET_TPYE_CONNECT);
+		send(writer.getBuffer());
+	}
+	
+	private void sendConnectionConfirmation() {
+		BinaryWriter writer = new BinaryWriter();
+		writer.write(PACKET_HEADER);
+		writer.write(PACKET_TYPE_CONFIRMATION);
 		send(writer.getBuffer());
 	}
 	

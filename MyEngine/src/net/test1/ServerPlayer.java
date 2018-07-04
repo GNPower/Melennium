@@ -18,7 +18,7 @@ public class ServerPlayer extends Player{
 	public void update(MSObject object){
 		float[] pos = object.findArray("positions").floatData;
 		float[] rot = object.findArray("rotations").floatData;
-		System.out.println("Positions Are:+\n\tX: " + pos[0] + "\n\tY: " + pos[1] + "\n\tZ: " + pos[2]);
+		//System.out.println("Positions Are:+\n\tX: " + pos[0] + "\n\tY: " + pos[1] + "\n\tZ: " + pos[2]);
 		super.setPosition(new Vector3f(pos[0], pos[1], pos[2]));
 		super.setRotation(new Vector3f(rot[0], rot[1], rot[2]));
 	}

@@ -1,6 +1,5 @@
 package renderEngine.textures;
 
-import util.loaders.Textures;
 
 public class TexturePack {
 	

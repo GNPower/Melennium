@@ -9,7 +9,6 @@ import java.util.List;
 
 import renderEngine.models.Mesh;
 import renderEngine.models.Vertex;
-import renderEngine.models.buffers.VAO;
 import util.maths.vectors.Vector2f;
 import util.maths.vectors.Vector3f;
 

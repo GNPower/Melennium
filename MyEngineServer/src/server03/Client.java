@@ -1,31 +1,19 @@
-package server01;
-
-import java.net.InetAddress;
+package server03;
 
 import serialization.containers.MSArray;
 import serialization.containers.MSDatabase;
 import serialization.containers.MSObject;
+public class Client {
 
-public class ServerClient {
-
-	public int userID;
-	public boolean connected = false;
 	private volatile Address storedAddress;
-	
-	private static int userIDCounter = 1;
-	
-	private byte[] modelData;
+
 	public volatile String username;
 	public volatile float[] positions;
 	public volatile float[] rotations;
 	public volatile float scale;
-	public volatile boolean isSet = false;
-	public volatile double connectionConfirmedLast = 0;
+	public volatile boolean connected = false;
 	
-	public ServerClient(Address address){
-		System.out.println("Server Has " + userIDCounter + " Connected Clients");
-		userID = userIDCounter++;
-		connected = true;
+	public Client(Address address){
 		storedAddress = address;
 	}
 	
@@ -35,7 +23,7 @@ public class ServerClient {
 		scale = object.findField("scale").getFloat();
 		positions = object.findArray("positions").floatData;
 		rotations = object.findArray("rotations").floatData;
-		isSet = true;
+		connected = true;
 	}
 	
 	public void update(MSDatabase database){
@@ -44,42 +32,19 @@ public class ServerClient {
 		rotations = object.findArray("rotations").floatData;
 	}
 	
-	public void confirmConnection(double time) {
-		connectionConfirmedLast = time;
-	}
-	
-	public MSDatabase serialize(){
-		return null;
-	}
-	
-	public int hashCode(){
-		return userID;
-	}
-	
-	public MSObject getUpdate(){
+	public MSObject getData(){
 		MSObject object = new MSObject(username);
 		try{
 			object.addArray(MSArray.Float("positions", positions));
 			object.addArray(MSArray.Float("rotations", rotations));
 		}catch(NullPointerException e){
+			System.err.println("Could not store client positions and/or rotations into an MSDatabase");
 			e.printStackTrace();
 		}
 		return object;
 	}
 	
-	public InetAddress getAddress(){
-		return storedAddress.getAddress();
-	}
-	
-	public int getPort(){
-		return storedAddress.getPort();
-	}
-	
-	public String getAddressId() {
-		return storedAddress.getId();
-	}
-	
-	public double getLastConnectionConfirmation() {
-		return connectionConfirmedLast;
+	public Address getAddress(){
+		return storedAddress;
 	}
 }

@@ -13,7 +13,6 @@ import renderEngine.shaders.entities.StaticShader;
 import renderEngine.shaders.terrain.TerrainShader;
 import renderEngine.terrains.Terrain;
 import util.RenderUtil;
-import util.colours.Colour;
 
 public class MasterRenderer {
 
