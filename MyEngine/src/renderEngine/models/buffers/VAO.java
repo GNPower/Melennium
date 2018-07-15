@@ -1,78 +1,127 @@
 package renderEngine.models.buffers;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import util.buffers.BufferUtil;
+import renderEngine.models.Mesh;
+import util.Utils;
 
 public class VAO {
+
+	private static List<VAO> vaos = new ArrayList<VAO>();
 	
-	private static ArrayList<VAO> list = new ArrayList<VAO>();
+	private int vaoId;
 	
-	private int id;
+	private IndicesVBO indexVbo;
+	private VBO[] vbos = new VBO[15];
 	
 	private int vboIndex;
-	private VBO indexVbo;
-	private VBO[] vbos = new VBO[15];
-
-	public VAO(){
-		create();
+	
+	public VAO(IndicesVBO indices, MeshVBO... meshVbos) {
+		vaoId = GL30.glGenVertexArrays();
 		vboIndex = 0;
-		list.add(this);
+		create(indices, meshVbos);
+		vaos.add(this);
 	}
 	
-	private void create(){
-		id = GL30.glGenVertexArrays();
+	public VAO(Mesh mesh) {
+		vaoId = GL30.glGenVertexArrays();
+		vboIndex = 0;
+		create(new IndicesVBO(mesh.getIndices()),
+				new MeshVBO(Utils.createFloatArrayOfVertexPositions(mesh.getVertices()), 3),
+				new MeshVBO(Utils.createFloatArrayOfVertexTextures(mesh.getVertices()), 2),
+				new MeshVBO(Utils.createFloatArrayOfVertexNormals(mesh.getVertices()), 3));
+		vaos.add(this);
 	}
 	
-	public void addStaticVBO(float[] data, int dataSize){
-		vbos[vboIndex] = new VBO();
-		FloatBuffer buffer = BufferUtil.createFlippedBuffer(data);
-		vbos[vboIndex].bind(VBO.ARRAY_BUFFER);
-		GL15.glBufferData(VBO.ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-		GL20.glVertexAttribPointer(vboIndex, dataSize, GL11.GL_FLOAT, false, 0, 0);
-		vbos[vboIndex].unbind(VBO.ARRAY_BUFFER);
-		vboIndex++;
+	public VAO(MeshVBO meshVbo) {
+		vaoId = GL30.glGenVertexArrays();
+		vboIndex = 0;
+		create(meshVbo);
+		vaos.add(this);
 	}
 	
-	public void addStaticIndices(int[] data){
-		indexVbo = new VBO();
-		IntBuffer buffer = BufferUtil.createFlippedBuffer(data);
-		indexVbo.bind(VBO.ELEMENT_ARRAY_BUFFER);
-		GL15.glBufferData(VBO.ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+	private void create(IndicesVBO indices, MeshVBO... meshVbos) {
+		bind();
+		indices.create();
+		indexVbo = indices;
+		for(MeshVBO vbo : meshVbos) {
+			vbo.create(vboIndex);
+			vbos[vboIndex++] = vbo;
+		}
+		unbind();
 	}
 	
-	public void bind(){
-		GL30.glBindVertexArray(id);
+	private void create(MeshVBO vbo) {
+		bind();
+		indexVbo = null;
+		vbo.create(vboIndex);
+		vbos[vboIndex++] = vbo;
+		unbind();
+	}
+
+	public void bind() {
+		GL30.glBindVertexArray(vaoId);
 	}
 	
-	public void unbind(){
+	public void unbind() {
 		GL30.glBindVertexArray(0);
 	}
 	
-	public void delete(){
-		GL30.glDeleteVertexArrays(id);
-		list.remove(this);
+	public void enable() {
+		bind();
+		for(int i = 0; i < vboIndex; i++) {
+			GL20.glEnableVertexAttribArray(i);
+		}
 	}
-
+	
+	public void disable() {
+		for(int i = 0; i < vboIndex; i++) {
+			GL20.glDisableVertexAttribArray(i);
+		}
+		unbind();
+	}
+	
+	public void render(boolean preBound, int dataLength) {
+		if(!preBound)
+			enable();
+		
+		GL11.glDrawElements(GL11.GL_TRIANGLES, dataLength, GL11.GL_UNSIGNED_INT, 0);
+		
+		if(!preBound)
+			disable();
+	}
+	
+	public void delete() {
+		GL30.glDeleteVertexArrays(vaoId);
+		vaos.remove(this);
+	}
+	
+	private void deleteVBOS() {
+		for(int i = 0; i < vboIndex; i++) {
+			GL15.glDeleteBuffers(vbos[i].getId());
+		}
+		vbos = null;
+	}
+	
 	public int getId() {
-		return id;
+		return vaoId;
 	}
-
+	
 	public int getVboIndex() {
 		return vboIndex;
 	}
 	
-	public static void cleanUp(){
-		for(VAO vao : list){
+	public static void cleanUp() {
+		for(VAO vao : vaos) {
+			vao.deleteVBOS();
 			GL30.glDeleteVertexArrays(vao.getId());
 		}
-		list = null;
+		vaos.clear();
 	}
 }

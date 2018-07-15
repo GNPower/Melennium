@@ -89,7 +89,7 @@ public class Client {
 		}				
 		receivedPackets.clear();
 		if((System.nanoTime() / Time.SECOND) - serverLastConfirmed > 5.0) {
-			System.out.println("Error server disconnected");
+			//System.out.println("Error server disconnected");
 			//TODO: handle leaving the server
 		}
 		MSDatabase playerData = new MSDatabase("playerUD");

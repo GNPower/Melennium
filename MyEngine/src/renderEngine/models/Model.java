@@ -1,11 +1,12 @@
 package renderEngine.models;
 
+import renderEngine.models.buffers.MeshVBO;
 import renderEngine.models.buffers.VAO;
 import renderEngine.textures.Texture2D;
 import renderEngine.textures.TextureAtlas;
 import renderEngine.textures.TexturePack;
-import util.loaders.ModelLoader;
-import util.loaders.ObjLoader;
+import util.ResourceLoader;
+import util.maths.vectors.Vector3f;
 
 public class Model {
 
@@ -43,7 +44,7 @@ public class Model {
 	}
 	
 	public Model(String objFile, String textureFile){
-		this.mesh = ObjLoader.loadObjModel(objFile);
+		this.mesh = ResourceLoader.loadObjModel(objFile);
 		this.texture = new Texture2D(textureFile);
 		this.material = new Material();
 		atlased = false;
@@ -59,7 +60,7 @@ public class Model {
 	}
 	
 	public Model(String objFile, String textureFile, int rows){
-		this.mesh = ObjLoader.loadObjModel(objFile);
+		this.mesh = ResourceLoader.loadObjModel(objFile);
 		this.atlas = new TextureAtlas(textureFile, rows);
 		this.material = new Material();
 		atlased = true;
@@ -76,15 +77,39 @@ public class Model {
 	}
 	
 	public Model(String objFile, TexturePack pack){
-		this.mesh = ObjLoader.loadObjModel(objFile);
+		this.mesh = ResourceLoader.loadObjModel(objFile);
 		this.pack = pack;
 		this.texture = null;
 		atlased = false;
 		createVAO();
 	}
 	
+	private Model(float[] positions) {
+		Vertex[] vertices = new Vertex[positions.length / 2];
+		for(int i = 0; i < vertices.length; i++) {
+			Vector3f vec = new Vector3f(positions[i * 2], positions[(i * 2) + 1], 0);
+			vertices[i] = new Vertex(vec);
+		}
+		mesh = new Mesh(vertices);
+		texture = null;
+		atlased = false;
+		pack = null;
+		material = new Material();
+		createGuiVAO(positions);
+	}
+	
+	public static Model createQuadModel(float[] positions) {
+		return new Model(positions);
+	}
+	
 	private void createVAO(){
-		vao = ModelLoader.loadToVAO(mesh);
+//		vao = ModelLoader.loadToVAO(mesh);
+		vao = new VAO(mesh);
+	}
+	
+	private void createGuiVAO(float[] positions) {
+//		vao = ModelLoader.loadToVAO(positions);
+		vao = new VAO(new MeshVBO(positions, 2));
 	}
 
 	public TexturePack getPack() {
@@ -119,6 +144,14 @@ public class Model {
 		if(atlased)
 			return atlas.getTexture();
 		return texture;
+	}
+	
+	public void setTexture(Texture2D texture) {
+		if(atlased) {
+			atlas.setTexture(texture);
+			return;
+		}
+		this.texture = texture;
 	}
 	
 	public int getAtlasRows(){

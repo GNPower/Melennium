@@ -3,11 +3,6 @@ package renderEngine.rendering;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-
 import renderEngine.entities.Entity;
 import renderEngine.models.Model;
 import renderEngine.shaders.entities.StaticShader;
@@ -29,17 +24,14 @@ public class EntityRenderer {
 			List<Entity> batch = entities.get(model);
 			for (Entity entity : batch) {
 				prepareInstance(entity);
-				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getMesh().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+				model.getVAO().render(true, model.getMesh().getVertexCount());
 			}
 			unbindModel(model);
 		}
 	}
 
 	private void prepareModel(Model model) {
-		GL30.glBindVertexArray(model.getVaoID());
-		for (int i = 0; i < model.getVAO().getVboIndex(); i++) {
-			GL20.glEnableVertexAttribArray(i);
-		}
+		model.getVAO().enable();
 
 		shader.loadMaterial(model.getMaterial());
 		shader.loadTexture(model.getTexture());
@@ -48,16 +40,14 @@ public class EntityRenderer {
 
 		if(model.getTexture().isHasTransparency())
 			RenderUtil.setCullMode(RenderUtil.GL_CULL_NONE);
-		
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+	
+		RenderUtil.enableTextureBank(0);
+//		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		model.getTexture().bind();
 	}
 
 	private void unbindModel(Model model) {
-		for (int i = 0; i < model.getVAO().getVboIndex(); i++) {
-			GL20.glDisableVertexAttribArray(i);
-		}
-		GL30.glBindVertexArray(0);
+		model.getVAO().disable();
 		
 		RenderUtil.setCullMode(RenderUtil.GL_CULL_BACK);
 	}
@@ -68,26 +58,4 @@ public class EntityRenderer {
 		shader.loadTransformationMatrix(transformationMatrix);
 		shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
 	}
-
-//	public void render(Entity entity, StaticShader shader) {
-//		Model model = entity.getModel();
-//		GL30.glBindVertexArray(model.getVaoID());
-//		for (int i = 0; i < model.getVAO().getVboIndex(); i++) {
-//			GL20.glEnableVertexAttribArray(i);
-//		}
-//
-//		Matrix4f transformationMatrix = Maths.createTransformationMatrtix(entity.getPosition(), entity.getRotation(),
-//				entity.getScale());
-//		shader.loadTransformationMatrix(transformationMatrix);
-//		shader.loadMaterial(entity.getModel().getMaterial());
-//
-//		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-//		model.getTexture().bind();
-//		GL11.glDrawElements(GL11.GL_TRIANGLES, model.getMesh().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-//
-//		for (int i = 0; i < model.getVAO().getVboIndex(); i++) {
-//			GL20.glDisableVertexAttribArray(i);
-//		}
-//		GL30.glBindVertexArray(0);
-//	}
 }

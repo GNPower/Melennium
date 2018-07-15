@@ -1,6 +1,7 @@
 package util;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 
@@ -129,6 +130,109 @@ public class RenderUtil {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
 		//increase the last number to decrease the detail of textures, good for stopping lag
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.5f);
+	}
+	
+	public static void enableTextureBank(int textureBankNumber) {
+		switch(textureBankNumber) {
+		case 0:
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			break;
+		case 1:
+			GL13.glActiveTexture(GL13.GL_TEXTURE1);
+			break;
+		case 2:
+			GL13.glActiveTexture(GL13.GL_TEXTURE2);
+			break;
+		case 3:
+			GL13.glActiveTexture(GL13.GL_TEXTURE3);
+			break;
+		case 4:
+			GL13.glActiveTexture(GL13.GL_TEXTURE4);
+			break;
+		case 5:
+			GL13.glActiveTexture(GL13.GL_TEXTURE5);
+			break;
+		case 6:
+			GL13.glActiveTexture(GL13.GL_TEXTURE6);
+			break;
+		case 7:
+			GL13.glActiveTexture(GL13.GL_TEXTURE7);
+			break;
+		case 8:
+			GL13.glActiveTexture(GL13.GL_TEXTURE8);
+			break;
+		case 9:
+			GL13.glActiveTexture(GL13.GL_TEXTURE9);
+			break;
+		case 10:
+			GL13.glActiveTexture(GL13.GL_TEXTURE10);
+			break;
+		case 11:
+			GL13.glActiveTexture(GL13.GL_TEXTURE11);
+			break;
+		case 12:
+			GL13.glActiveTexture(GL13.GL_TEXTURE12);
+			break;
+		case 13:
+			GL13.glActiveTexture(GL13.GL_TEXTURE13);
+			break;
+		case 14:
+			GL13.glActiveTexture(GL13.GL_TEXTURE14);
+			break;
+		case 15:
+			GL13.glActiveTexture(GL13.GL_TEXTURE15);
+			break;
+		case 16:
+			GL13.glActiveTexture(GL13.GL_TEXTURE16);
+			break;
+		case 17:
+			GL13.glActiveTexture(GL13.GL_TEXTURE17);
+			break;
+		case 18:
+			GL13.glActiveTexture(GL13.GL_TEXTURE18);
+			break;
+		case 19:
+			GL13.glActiveTexture(GL13.GL_TEXTURE19);
+			break;
+		case 20:
+			GL13.glActiveTexture(GL13.GL_TEXTURE20);
+			break;
+		case 21:
+			GL13.glActiveTexture(GL13.GL_TEXTURE21);
+			break;
+		case 22:
+			GL13.glActiveTexture(GL13.GL_TEXTURE22);
+			break;
+		case 23:
+			GL13.glActiveTexture(GL13.GL_TEXTURE23);
+			break;
+		case 24:
+			GL13.glActiveTexture(GL13.GL_TEXTURE24);
+			break;
+		case 25:
+			GL13.glActiveTexture(GL13.GL_TEXTURE25);
+			break;
+		case 26:
+			GL13.glActiveTexture(GL13.GL_TEXTURE26);
+			break;
+		case 27:
+			GL13.glActiveTexture(GL13.GL_TEXTURE27);
+			break;
+		case 28:
+			GL13.glActiveTexture(GL13.GL_TEXTURE28);
+			break;
+		case 29:
+			GL13.glActiveTexture(GL13.GL_TEXTURE29);
+			break;
+		case 30:
+			GL13.glActiveTexture(GL13.GL_TEXTURE30);
+			break;
+		case 31:
+			GL13.glActiveTexture(GL13.GL_TEXTURE31);
+			break;
+		default:
+			return;
+		}
 	}
 
 	public static Colour getColour() {

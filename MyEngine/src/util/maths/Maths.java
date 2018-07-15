@@ -16,12 +16,20 @@ public class Maths {
 	//
 	// return translationM.mul(rotationM.mul(scaleM));
 	// }
+	
+	
 
 	public static Matrix4f createTransformationMatrtix(Vector3f translation, Vector3f rotation, float scale) {
 
 		Matrix4f translationM = new Matrix4f().initTranslation(translation).mul(new Matrix4f().initRotation(rotation)
 				.mul(new Matrix4f().initScaling(new Vector3f(scale, scale, scale))));
 
+		return translationM;
+	}
+	
+	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
+		Matrix4f translationM = new Matrix4f().initTranslation(new Vector3f(translation.getX(), translation.getY(), 0)).mul(new Matrix4f().initScaling(new Vector3f(scale.getX(), scale.getY(), 0)));
+	
 		return translationM;
 	}
 

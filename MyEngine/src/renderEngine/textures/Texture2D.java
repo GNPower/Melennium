@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-import util.loaders.Textures;
+import util.ResourceLoader;
 
 public class Texture2D {
 	
@@ -20,7 +20,7 @@ public class Texture2D {
 	}
 	
 	public Texture2D(String fileName){
-		id = Textures.loadTexture2D(fileName);
+		id = ResourceLoader.loadTexture2D(fileName);
 		list.add(this);
 	}
 	

@@ -2,15 +2,10 @@ package renderEngine.rendering;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-
-import renderEngine.models.Model;
 import renderEngine.shaders.terrain.TerrainShader;
 import renderEngine.terrains.Terrain;
 import renderEngine.textures.TexturePack;
+import util.RenderUtil;
 import util.maths.Maths;
 import util.maths.matrices.Matrix4f;
 import util.maths.vectors.Vector3f;
@@ -27,67 +22,45 @@ public class TerrainRenderer {
 		for(Terrain terrain : terrains){
 			prepareTerrain(terrain);
 			prepareInstance(terrain);
-			GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getModel().getMesh().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-			unbindTerrain(terrain.getModel());
+			terrain.getModel().getVAO().render(true, terrain.getModel().getMesh().getVertexCount());
+			terrain.getModel().getVAO().disable();
 		}
 	}
 	
 	private void prepareTerrain(Terrain terrain) {
-		GL30.glBindVertexArray(terrain.getModel().getVaoID());
-		for (int i = 0; i < terrain.getModel().getVAO().getVboIndex(); i++) {
-			GL20.glEnableVertexAttribArray(i);
-		}
+		terrain.getModel().getVAO().enable();
 
 		shader.loadMaterial(terrain.getModel().getMaterial());
 
 		bindTextures(terrain);
-//		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-//		terrain.getModel().getTexture().bind();
-		
 	}
 	
 	private void bindTextures(Terrain terrain){
 		TexturePack pack = terrain.getTexturePack();
 		
-//		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-//		pack.getBackgroundTexture().bind();
-//		
-//		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-//		pack.getrTexture().bind();
-//		
-//		GL13.glActiveTexture(GL13.GL_TEXTURE2);
-//		pack.getgTexture().bind();
-//		
-//		GL13.glActiveTexture(GL13.GL_TEXTURE3);
-//		pack.getbTexture().bind();
-//		
-//		GL13.glActiveTexture(GL13.GL_TEXTURE4);
-//		terrain.getBlendMap().bind();
-		
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		RenderUtil.enableTextureBank(0);
+		//GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		pack.getBackground().bind();
 		
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		RenderUtil.enableTextureBank(1);
+		//GL13.glActiveTexture(GL13.GL_TEXTURE1);
 		pack.getTexture(0).bind();
 		
-		GL13.glActiveTexture(GL13.GL_TEXTURE2);
+		RenderUtil.enableTextureBank(2);
+		//GL13.glActiveTexture(GL13.GL_TEXTURE2);
 		pack.getTexture(1).bind();
 		
-		GL13.glActiveTexture(GL13.GL_TEXTURE3);
+		RenderUtil.enableTextureBank(3);
+		//GL13.glActiveTexture(GL13.GL_TEXTURE3);
 		pack.getTexture(2).bind();
 		
-		GL13.glActiveTexture(GL13.GL_TEXTURE4);
+		RenderUtil.enableTextureBank(4);
+		//GL13.glActiveTexture(GL13.GL_TEXTURE4);
 		pack.getTexture(3).bind();
 		
-		GL13.glActiveTexture(GL13.GL_TEXTURE5);
+		RenderUtil.enableTextureBank(5);
+		//GL13.glActiveTexture(GL13.GL_TEXTURE5);
 		terrain.getBlendMap().bind();
-	}
-
-	private void unbindTerrain(Model model) {
-		for (int i = 0; i < model.getVAO().getVboIndex(); i++) {
-			GL20.glDisableVertexAttribArray(i);
-		}
-		GL30.glBindVertexArray(0);
 	}
 
 	private void prepareInstance(Terrain terrain) {

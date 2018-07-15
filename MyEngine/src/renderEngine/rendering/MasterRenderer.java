@@ -30,18 +30,18 @@ public class MasterRenderer {
 		RenderUtil.setCullMode(RenderUtil.GL_CULL_BACK);
 	}
 	
-	public void render(Light light, Camera camera){
+	public void render(Light sun, List<Light> lights, Camera camera){
 		prepare();
-		renderEntities(light, camera);
-		renderTerrains(light, camera);
+		renderEntities(sun, lights, camera);
+		renderTerrains(sun, lights, camera);
 	}
 	
-	private void renderEntities(Light light, Camera camera){
+	private void renderEntities(Light sun, List<Light> lights, Camera camera){
 		shader.start();
 		shader.loadSkyColour(RenderUtil.getColour());
 		shader.loadAmbientLightFactor(0.06f);
 		shader.renderFog(true);
-		shader.loadLight(light);
+		shader.loadLights(sun, lights);
 		shader.loadViewMatrix(camera);
 		shader.loadProjectionMatrix(camera.getProjectionMatrix());
 		renderer.render(entities);
@@ -49,12 +49,12 @@ public class MasterRenderer {
 		entities.clear();
 	}
 	
-	private void renderTerrains(Light light, Camera camera){
+	private void renderTerrains(Light sun, List<Light> lights, Camera camera){
 		Tshader.start();
 		Tshader.loadSkyColour(RenderUtil.getColour());
 		Tshader.loadAmbientLightFactor(0.06f);
 		Tshader.renderFog(true);
-		Tshader.loadLight(light);
+		Tshader.loadLights(sun, lights);
 		Tshader.loadViewMatrix(camera);
 		Tshader.loadProjectionMatrix(camera.getProjectionMatrix());
 		Tshader.connectTextureUnits();

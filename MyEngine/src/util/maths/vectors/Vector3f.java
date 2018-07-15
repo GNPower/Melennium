@@ -152,6 +152,12 @@ public class Vector3f {
 		this.z = z;
 	}
 	
+	public void set(Vector3f vec) {
+		x = vec.getX();
+		y = vec.getY();
+		z = vec.getZ();
+	}
+	
 	public String toString(){
 		return "X: " + this.x + "	Y: " + this.y + "	Z: " + this.z;			
 	}

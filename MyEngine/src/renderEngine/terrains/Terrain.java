@@ -7,7 +7,7 @@ import renderEngine.models.Model;
 import renderEngine.models.Vertex;
 import renderEngine.textures.Texture2D;
 import renderEngine.textures.TexturePack;
-import util.loaders.Textures;
+import util.ResourceLoader;
 import util.maths.Maths;
 import util.maths.vectors.Vector2f;
 import util.maths.vectors.Vector3f;
@@ -16,6 +16,8 @@ public class Terrain {
 	
 	public static int TERRAIN_SIZE = 800;
 	private static int VERTEX_COUNT = 128;
+	
+	private static Terrain emptyTerrain = new Terrain();
 	
 	private static final float MAX_HEIGHT = 40;
 	private static final float MAX_PIXEL_COLOUR = 256 * 256 * 256;
@@ -36,7 +38,17 @@ public class Terrain {
 		this.x = gridX * TERRAIN_SIZE;
 		this.z = gridZ * TERRAIN_SIZE;
 		this.blendMap = new Texture2D(blendMap);
-		model = new Model(generateHeightMappedTerrain(Textures.loadImage(heightMap)), pack);
+		model = new Model(generateHeightMappedTerrain(ResourceLoader.loadImage(heightMap)), pack);
+	}
+	
+	private Terrain() {
+		x = 0;
+		z = 0;
+		model = new Model(generateBasicTerrain(VERTEX_COUNT));
+	}
+	
+	public static Terrain returnEmptyTerrain() {
+		return emptyTerrain;
 	}
 	
 	private Mesh generateBasicTerrain(int vertexCount){
@@ -45,6 +57,12 @@ public class Terrain {
 		float[] normals = new float[count * 3];
 		float[] textureCoords = new float[count*2];
 		
+		heights = new float[vertexCount][vertexCount];
+		for(int x = 0; x < vertexCount; x++) {
+			for(int y = 0; y < vertexCount; y++) {
+				heights[x][y] = 0;
+			}
+		}
 		Vertex[] vertexArray = new Vertex[count];				
 		int[] indices = new int[6*(vertexCount-1)*(vertexCount-1)];				
 	

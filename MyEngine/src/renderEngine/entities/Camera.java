@@ -28,6 +28,8 @@ public class Camera {
 	private float distanceFromPlayer = 50;
 	private float angleAroundPlayer = 0;
 	
+	private Vector3f lastPos = new Vector3f(0,0,0);
+	
 	public Camera(Player player){
 		projectionM = new Matrix4f().initProjection(FOV, Window.getWidth(), Window.getHeight(), NEAR_PLANE, FAR_PLANE);
 		this.player = player;
@@ -39,7 +41,9 @@ public class Camera {
 	
 	public void move(){
 //		if(followPlayer)
+
 			moveWithPlayer();
+//			System.out.println("LP: " + lastPos.toString() + "\nNP: " + position.toString());
 //		else
 //			moveIndependant();
 		//moveIndependant();
@@ -160,5 +164,12 @@ public class Camera {
 
 	public void setFollowPlayer(boolean followPlayer) {
 		this.followPlayer = followPlayer;
+	}
+	
+	public boolean isMoved() {
+		if(lastPos.getX() == position.getX() && lastPos.getY() == position.getY() && lastPos.getZ() == position.getZ())
+			return false;
+		lastPos.set(position);
+		return true;
 	}
 }

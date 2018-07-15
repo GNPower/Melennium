@@ -7,7 +7,7 @@ import renderEngine.entities.Camera;
 import renderEngine.models.Mesh;
 import renderEngine.models.Vertex;
 import renderEngine.rendering.MasterRenderer;
-import util.loaders.LODLoader;
+import util.ResourceLoader;
 import util.maths.vectors.Vector2f;
 import util.maths.vectors.Vector3f;
 
@@ -28,7 +28,7 @@ public class TerrainManager {
 		terrains = new ArrayList<Terrain>();
 		this.renderer = renderer;
 		this.camera = camera;
-		createLodMap(LODLoader.loadLOD(CONFIG_FILE));
+		createLodMap(ResourceLoader.loadLOD(CONFIG_FILE));
 	}
 	
 	public void update(){		
@@ -116,6 +116,15 @@ public class TerrainManager {
 	
 	public void addTerrain(Terrain terrain){
 		terrains.add(terrain);
+	}
+	
+	public Terrain getTerrain(float worldX, float worldZ) {
+		for(Terrain terrain : terrains) {
+			if(worldX >= terrain.getX() && worldX <= terrain.getX() + Terrain.TERRAIN_SIZE && worldZ >= terrain.getX() && worldZ <= terrain.getZ() + Terrain.TERRAIN_SIZE) {
+				return terrain;
+			}
+		}
+		return Terrain.returnEmptyTerrain();
 	}
 }
 /*

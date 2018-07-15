@@ -1,27 +1,35 @@
 package coreEngine.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import coreEngine.screen.Window;
 import net.test1.Client;
 import net.test1.ServerPlayer;
 import renderEngine.entities.Camera;
 import renderEngine.entities.Entity;
+import renderEngine.entities.EntityManager;
 import renderEngine.entities.Player;
 import renderEngine.entities.lights.Light;
+import renderEngine.guis.Gui;
+import renderEngine.models.Mesh;
 import renderEngine.models.Model;
 import renderEngine.models.buffers.VAO;
-import renderEngine.models.buffers.VBO;
+import renderEngine.rendering.GuiRenderer;
 import renderEngine.rendering.MasterRenderer;
 import renderEngine.terrains.Terrain;
 import renderEngine.terrains.TerrainManager;
 import renderEngine.textures.Texture2D;
 import util.RenderUtil;
-import util.colours.ColourUtil;
+import util.ResourceLoader;
+import util.colours.Colour;
 import util.interfacing.accessories.KeyboardInput;
 import util.interfacing.accessories.Keys;
 import util.interfacing.accessories.MouseInput;
-import util.loaders.Textures;
+import util.maths.vectors.Vector2f;
 import util.maths.vectors.Vector3f;
 import util.time.Time;
+import util.time.Timer;
 
 public class Game {
 	
@@ -41,11 +49,16 @@ public class Game {
 	
 	Camera camera = new Camera(player);
 	TerrainManager Tmanager = new TerrainManager(renderer, camera);
+	EntityManager Emanager = new EntityManager(renderer);
 	
+	List<Light> lights = new ArrayList<Light>();
+	Light light = new Light(new Vector3f(0, 3000000, -5), new Colour(1, 1, 1), 20);
+	Timer timer = new Timer(1.0);
 	
-	Light light = new Light(new Vector3f(0, 3000000, -5), ColourUtil.white);
+	Terrain terrain = new Terrain(0, 0, ResourceLoader.loadTexturePack("terrain1"), "terrains/terrain1/blend.png", "terrains/terrain1/heightmap.png");
 	
-	Terrain terrain = new Terrain(0, 0, Textures.loadTexturePack("terrain1"), "terrains/terrain1/blend.png", "terrains/terrain1/heightmap.png");
+	List<Gui> guis = new ArrayList<Gui>();
+	GuiRenderer Grenderer =  new GuiRenderer();
 	
 	private double FPS;
 	private boolean isRunning;
@@ -80,6 +93,22 @@ public class Game {
 		Tmanager.addTerrain(terrain);
 		fern.getModel().getTexture().setHasTransparency(true);
 		
+		Emanager.createEntity(model2, new Vector3f(80, Tmanager.getTerrain(80, 80).getHeight(80, 80), 80), new Vector3f(0, 0, 0), 1, 1);
+		Emanager.createEntity(Tmanager, model2, new Vector2f(60, 60), new Vector3f(0,0,0), 1, 1);
+		Emanager.addEntity(fern);
+		Emanager.addEntity(player);
+		
+		lights.add(new Light(new Vector3f(20, 10, 20), new Colour(new Vector3f(10, 0, 0)), new Vector3f(1, 0.01f, 0.002f), 20));
+		lights.add(new Light(new Vector3f(40, 10, 40), new Colour(new Vector3f(0, 10, 0)), new Vector3f(1, 0.01f, 0.002f),20));
+		lights.add(new Light(new Vector3f(60, 10, 60), new Colour(new Vector3f(0, 0, 10)), new Vector3f(1, 0.01f, 0.002f),100));
+		lights.add(new Light(new Vector3f(80, 10, 80), new Colour(new Vector3f(10, 10, 0)), new Vector3f(1, 0.01f, 0.002f),60));
+		lights.add(new Light(new Vector3f(100, 10, 100), new Colour(new Vector3f(10, 0, 0)), new Vector3f(1, 0.01f, 0.002f),20));
+		
+//		Mesh mesh = ResourceLoader.loadObjModel("dome");
+		
+		
+//		guis.add(new Gui("cyan.png", new Vector2f(0.5f,0.5f), new Vector2f(0.25f,0.25f)));
+		
 		String username = "Graham" + (System.nanoTime() / 100000000);
 		player.setName(username);
 		System.out.println("Username is: " + username);
@@ -87,13 +116,13 @@ public class Game {
 		//CONNECT TO SERVER01 HERE:
 		
 		//Client client = new Client("localhost", 8192);
-		ServerPlayer.setPlayerModel(model);
-		if(!client.connect(username)){		
-			System.out.println("Failed to connect to server! Loading into local session");
-		}else {
-			System.out.println("Connected to server!");
-		}
-		sp = new ServerPlayer("bob", new float[]{10, 0, 10}, new float[]{0,0,0});
+//			ServerPlayer.setPlayerModel(model);
+//			if(!client.connect(username)){		
+//				System.out.println("Failed to connect to server! Loading into local session");
+//			}else {
+//				System.out.println("Connected to server!");
+//			}
+//			sp = new ServerPlayer("bob", new float[]{10, 0, 10}, new float[]{0,0,0});
 		//client.addPlayer(sp);
 		
 		//CONNECT TO SERVER02 HERE:
@@ -103,7 +132,6 @@ public class Game {
 		
 		//MSDatabase db = MSDatabase.deserializeFromFile("level.pcdb");
 		//client.send(db);
-		
 	}
 	
 	private void input(){
@@ -119,20 +147,21 @@ public class Game {
 		//entity.increaseRotation(0, 0.05f, 0);
 		//player.move(camera);
 		camera.move();		
-		player.move(terrain);	
-		client.update();
+		player.move(Tmanager.getTerrain(player.getPosition().getX(), player.getPosition().getZ()));	
+//		lights = Light.sortLights(lights, camera.getPosition());
+//		client.update();
 		//System.out.println(entity.getPosition());
+//		lights = Light.sortLights(lights, camera.getPosition());
 	}
 	
 	private void render(){
-		client.update();
 		Tmanager.render();
-		renderer.processEntity(player);
-		renderer.processEntity(fern);
-		client.renderPlayers(renderer);
+		Emanager.render();
+//		client.renderPlayers(renderer);
 		//renderer.processEntity(sp);
 		//renderer.processEntity(player);
-		renderer.render(light, camera);
+		renderer.render(light, lights, camera);
+		Grenderer.render(guis);
 		window.render();
 		//System.out.println(camera.getPosition());
 	}
@@ -157,7 +186,7 @@ public class Game {
 			
 			while(unprocessedTime > frameTime){
 				render = true;
-				 
+				
 				unprocessedTime -= frameTime;
 				
 				if(window.isCloseRequested())
@@ -191,9 +220,9 @@ public class Game {
 	}
 	
 	private void cleanUp(){
+		Grenderer.cleanUp();
 		renderer.cleanUp();
 		Texture2D.cleanUp();
-		VBO.cleanUp();
 		VAO.cleanUp();
 		KeyboardInput.cleanUp();
 		MouseInput.cleanUp();
