@@ -1,5 +1,8 @@
 package core.modules.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import core.buffers.VAO;
 import core.configs.Default;
 import core.kernel.RenderContext;
@@ -12,6 +15,8 @@ import core.utils.Constants;
 import core.utils.objloader.OBJLoader;
 
 public class Entity extends GameObject{
+	
+	private static List<Entity> entities = new ArrayList<Entity>(); 
 
 	private Model model;
 	private Vec3f position, rotation;
@@ -37,6 +42,8 @@ public class Entity extends GameObject{
 		
 		getWorldTransform().setTranslation(position);
 		getWorldTransform().setRotation(rotation);
+		
+		entities.add(this);
 	}
 	
 	public void move(Vec3f movDisplacement, Vec3f rotDisplacement) {
@@ -50,10 +57,47 @@ public class Entity extends GameObject{
 		getWorldTransform().setTranslation(position);
 	}
 	
+	public void setPosition(Vec3f position) {
+		this.position = position;
+		getWorldTransform().setTranslation(position);
+	}
+	
+	public void setRotation(Vec3f rotation) {
+		this.rotation = rotation;
+		getWorldTransform().setRotation(rotation);
+	}
+	
 	public void render() {
 		if(RenderContext.getInstance().isWireframe())
 			getComponents().get(Constants.RenderComponents.WIREFRAME_RENDERER_COMPONENT).render();
 		else
 			getComponents().get(Constants.RenderComponents.RENDERER_COMPONENT).render();
+	}
+	
+	public void changeModel(Model model) {
+		VAO vao = new VAO(model.getMesh());	
+		
+		Renderer renderer = new Renderer();
+		renderer.setVAO(vao);
+		renderer.setInfo(new RenderInfo(new Default(), EntityShader.getInstance()));
+		
+		Renderer wireframeRenderer = new Renderer();
+		wireframeRenderer.setVAO(vao);
+		wireframeRenderer.setInfo(new RenderInfo(new Default(), EntityWireframeShader.getInstance()));
+		
+		addComponent(Constants.RenderComponents.RENDERER_COMPONENT, renderer);
+		addComponent(Constants.RenderComponents.WIREFRAME_RENDERER_COMPONENT, wireframeRenderer);
+	}
+	
+	public static List<Entity> getEntities(){
+		return entities;
+	}
+
+	public Vec3f getPosition() {
+		return position;
+	}
+
+	public Vec3f getRotation() {
+		return rotation;
 	}
 }

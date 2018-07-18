@@ -5,9 +5,9 @@ import org.lwjgl.opengl.GL31;
 import org.lwjgl.opengl.GL40;
 import org.lwjgl.opengl.GL43;
 
-import core.utils.Constants;
-import core.kernel.RenderingEngine;
 import core.kernel.input.Input;
+import core.utils.Constants;
+import net.Client;
 
 /**
  * 
@@ -84,6 +84,7 @@ public class CoreEngine {
 				if(frameCounter >= Constants.NANOSECOND)
 				{
 					setFps(frames);
+					System.out.println("fps: " + frames);
 					frames = 0;
 					frameCounter = 0;
 				}
@@ -115,6 +116,8 @@ public class CoreEngine {
 	}
 	
 	private void render(){
+		Input.getInstance().update();
+		Camera.getInstance().update();
 		renderingEngine.render();
 	}
 	

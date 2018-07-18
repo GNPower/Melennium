@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="lib/jars/slick-util.jar"/>
 	<classpathentry kind="lib" path="lib/jars/lwjgl-stb.jar"/>
 	<classpathentry kind="lib" path="lib/jars/lwjgl-core.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/MillenniumSerialization"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

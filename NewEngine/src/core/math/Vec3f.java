@@ -166,6 +166,7 @@ public class Vec3f {
 		Z = z;
 	}
 	
-	
-	
+	public float[] toArray(){
+		return new float[] {getX(), getY(), getZ()};
+	}	
 }

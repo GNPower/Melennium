@@ -5,9 +5,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 import serialization.Type;
 import serialization.containers.MSArray;
@@ -22,6 +22,7 @@ public class Server {
 
 	private int port;
 	private Thread listenThread;
+	private Thread sendThread;
 	private boolean listening = false;
 	private DatagramSocket socket;
 	
@@ -54,19 +55,23 @@ public class Server {
 		listenThread.start();
 		System.out.println("Server is listening...");
 		
-		runServer();
+		sendThread = new Thread(() -> {
+			runServer();
+		}, "MillenniumServer-Sender");
+		sendThread.start();
 	}
 	
-	private void runServer(){		
+	private void runServer(){
 		while(listening){
 			MSDatabase database = new MSDatabase("serverUD");
-			Iterator<Entry<String, ServerClient>> iterator = clients.entrySet().iterator();
+			Collection<ServerClient> list = clients.values();
+			Iterator<ServerClient> iterator = list.iterator();
 			while(iterator.hasNext()) {
-				ServerClient client = iterator.next().getValue();
+				ServerClient client = iterator.next();
 				double diff = (System.nanoTime() / SECOND) - client.getLastConnectionConfirmation();
-				System.out.println("diff: " + diff);
+//				System.out.println("diff: " + diff);
 				if(diff > 5.0) {
-					System.out.println("client removed");
+//					System.out.println("client removed: " + client.username);
 					iterator.remove();
 					continue;
 				}else if(diff >= 2.0) {
@@ -132,7 +137,7 @@ public class Server {
 				send(new byte[] {0x40, 0x40, 0x02}, address, port);
 				break;
 			case 0x03:
-				System.out.println("client confirmed");
+//				System.out.println("client confirmed");
 				clients.get(Address.createAddressID(address, port)).confirmConnection(System.nanoTime() / SECOND);
 			}
 		} else{
@@ -142,10 +147,11 @@ public class Server {
 	
 	private void process(String addressID, MSDatabase database){		
 		//System.out.println("Received Database!");
-		//dump(database);
+//		dump(database);
 		String name = database.getName();
 		switch(name){
 		case "playerID":
+			dump(database);
 			clients.get(addressID).setPlayerID(database);
 			System.out.println("Received Player ID!");
 			System.out.println("Connected Clients By Username Are:");

@@ -1,5 +1,9 @@
 package core.utils;
 
+import core.model.Mesh;
+import core.model.Model;
+import core.utils.objloader.OBJLoader;
+
 public class Constants {
 
 	public static final long NANOSECOND = 1000000000;
@@ -13,7 +17,10 @@ public class Constants {
 	public static enum RenderComponents{
 		RENDERER_COMPONENT, WIREFRAME_RENDERER_COMPONENT;
 	}
-
+	
+	public static final String DEFAULT_MODEL_LOCATION = "res/models/barrel/barrel.obj";
+	public static final Model DEFAULT_MODEL = new Model(OBJLoader.loadObjModel("res/models/barrel/barrel.obj"));
+	
 //	public static final String RENDERER_COMPONENT = "Renderer";
 //	public static final String WIREFRAME_RENDERER_COMPONENT = "WFRenderer";
 }

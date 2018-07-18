@@ -7,6 +7,7 @@ import core.kernel.input.Keys;
 import core.math.Matrix4f;
 import core.math.Quaternion;
 import core.math.Vec3f;
+import core.modules.entities.Entity;
 import core.utils.Constants;
 
 public class Camera {
@@ -48,7 +49,14 @@ public class Camera {
 	
 	private Quaternion[] frustumPlanes = new Quaternion[6];
 	private Vec3f[] frustumCorners = new Vec3f[8];
-	  
+	
+	private Entity trackedEntity;
+	private boolean trackEntity;
+	
+	private float distanceFromPlayer = 50;
+	private float yaw;
+	private float angleAroundPlayer = 0;
+	
 	public static Camera getInstance() 
 	{
 	    if(instance == null) 
@@ -80,6 +88,20 @@ public class Camera {
 	
 	public void update()
 	{
+		if(Input.getInstance().isKeyPushed(Keys.KEY_C)) {
+			if(trackEntity) {
+				trackEntity = false;
+			}else {
+				trackEntity = true;
+			}
+		}
+		if(trackEntity)
+			trackEntity();
+		else
+			moveIndividually();
+	}
+	
+	private void moveIndividually() {
 //		System.out.println("X: " + position.getX() + "\tZ: " + position.getZ());
 		
 		setPreviousPosition(new Vec3f(position));
@@ -196,6 +218,10 @@ public class Camera {
 		setViewProjectionMatrix(projectionMatrix.mul(viewMatrix));
 		
 //		System.out.println("X: " + position.getX() + "\tY: " + position.getY() + "\tZ: " + position.getZ());
+	}
+	
+	private void trackEntity() {
+		
 	}
 	
 	public void move(Vec3f dir, float amount)
@@ -352,5 +378,21 @@ public class Camera {
 
 	private void setPreviousForward(Vec3f previousForward) {
 		this.previousForward = previousForward;
+	}
+
+	public Entity getTrakedEntity() {
+		return trackedEntity;
+	}
+
+	public void setTrakedEntity(Entity trakedEntity) {
+		this.trackedEntity = trakedEntity;
+	}
+
+	public boolean isTrackEntity() {
+		return trackEntity;
+	}
+
+	public void setTrackEntity(boolean trackEntity) {
+		this.trackEntity = trackEntity;
 	}
 }
