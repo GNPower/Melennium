@@ -24,6 +24,7 @@ public class EntityWireframeShader extends Shader{
 		compileShader();
 		
 		addUniform("m_MVP");
+		
 		addUniform("m_World");
 	}
 	
