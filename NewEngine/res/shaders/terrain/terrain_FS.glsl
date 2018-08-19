@@ -5,6 +5,7 @@ layout (location = 0) out vec4 outputColour;
 in vec2 mapCoord_FS;
 in vec3 position_FS;
 in vec3 tangent_FS;
+/**/in vec3 toLightVector_FS;
 
 struct Material{
 	
@@ -20,6 +21,7 @@ uniform sampler2D splatmap;
 uniform Material materials[3];
 uniform int tbn_range;
 uniform vec3 cameraPosition;
+/**/uniform vec3 lightColour;
 
 const vec3 lightDirection = vec3(0.1,-1.0,0.1);
 const float intensity = 1.2;
@@ -87,7 +89,13 @@ void main(){
 	}
 	
 	float diff = diffuse(lightDirection, normal, intensity);
-	fragColour *= diff;
+//	fragColour *= diff;
+	
+/**/ vec3 unitLightVector = normalize(toLightVector_FS);
+/**/ float nDotl = dot(normal, unitLightVector);
+/**/ float brightness = max(nDotl, 0.0);
+/**/ vec3 diffuse = brightness * lightColour;
+/**/ fragColour *= diffuse;
 	
 	float fogFactor = getFogFactor(dist);
 	fragColour = mix(fogColour, fragColour, clamp(fogFactor, 0, 1));

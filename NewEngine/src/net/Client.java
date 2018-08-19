@@ -51,6 +51,7 @@ public class Client {
 	
 	private Map<String, EntityInterface> entities = new HashMap<String, EntityInterface>();
 	
+	
 	/**
 	 * Format: 192.168.1.1:5000
 	 * 
@@ -77,7 +78,7 @@ public class Client {
 		this.port = port;
 	}
 	
-	public void update() {
+	public void update(Entity player) {
 		Iterator<Entry<InetAddress, DatagramPacket>> iterator = receivedPackets.entrySet().iterator();
 		while(iterator.hasNext()) {
 			Entry<InetAddress, DatagramPacket> client = iterator.next();
@@ -87,11 +88,14 @@ public class Client {
 		if((System.nanoTime() / Constants.NANOSECOND) - serverLastConfirmed > 5.0) {
 			//TODO: handle leaving the server
 		}
-		MSDatabase playerData = new MSDatabase("PlayerUD");
+		entities.get(username).update(player);
+		MSDatabase playerData = new MSDatabase("playerUD");
 		for(EntityInterface entity : entities.values()) {
 			playerData.addObject(entity.serialize());
 			//TODO: write serialize function
 		}
+//		dump(playerData);
+		
 		send(playerData);
 	}
 	
@@ -335,7 +339,8 @@ public class Client {
 	
 	public void render() {
 		for(EntityInterface entity : entities.values()) {
-			entity.render();
+			if(entity.getName() != username)
+				entity.render();
 		}
 	}
 }

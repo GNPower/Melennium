@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -51,6 +52,12 @@ public class ImageLoader {
 	
 	public static BufferedImage loadBufferedImage(String file) throws IOException {
 		return ImageIO.read(new File(file));
+	}
+	
+	public static void cleanUp() {
+		for(Integer num : images.keySet())
+			GL11.glDeleteTextures(num);
+		images.clear();
 	}
 	
 //	public static int[] loadImage(String file) {

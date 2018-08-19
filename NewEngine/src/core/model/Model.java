@@ -5,8 +5,8 @@ import core.texturing.Texture2D;
 public class Model {
 
 	private Mesh mesh;
-	private Material material;
-	private Texture2D texture;
+	private Material material = null;
+	private Texture2D texture = null;
 	
 	public Model(Mesh mesh)
 	{

@@ -1,9 +1,11 @@
 package net;
 
+import core.kernel.Camera;
 import core.math.Vec3f;
 import core.model.Model;
 import core.modules.entities.Entity;
 import core.utils.Constants;
+import serialization.containers.MSArray;
 import serialization.containers.MSObject;
 
 public class EntityInterface extends Entity{
@@ -25,12 +27,19 @@ public class EntityInterface extends Entity{
 		setRotation(new Vec3f(rot[0], rot[1], rot[2]));
 	}
 	
+	public void update(Entity player) {
+		super.setPosition(player.getPosition());
+	}
+		
 	public void render() {
 		super.render();
 	}
 	
 	public MSObject serialize() {
-		return new MSObject("");
+		MSObject object = new MSObject(username);
+		object.addArray(MSArray.Float("positions", super.getPosition().toArray()));
+		object.addArray(MSArray.Float("rotations", super.getRotation().toArray()));
+		return object;
 	}
 	
 	public String getName() {

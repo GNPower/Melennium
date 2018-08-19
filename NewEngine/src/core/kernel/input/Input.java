@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 import core.math.Vec2f;
 
@@ -35,7 +36,7 @@ public class Input {
 	
 	protected Input() {
 		cursorPosition = new Vec2f();
-		lockedCursorPosition = new Vec2f();
+		lockedCursorPosition = new Vec2f(Display.getWidth() / 2f, Display.getHeight() / 2f);
 		
 		try {
 			Keyboard.create();

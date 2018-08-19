@@ -3,6 +3,7 @@ package core.modules.terrain;
 import org.lwjgl.opengl.GL13;
 
 import core.kernel.Camera;
+import core.kernel.World;
 import core.scene.GameObject;
 import core.shaders.Shader;
 import core.utils.ResourceLoader;
@@ -33,6 +34,8 @@ public class TerrainShader extends Shader{
 		addUniform("localMatrix");
 		addUniform("worldMatrix");
 		addUniform("m_ViewProjection");
+/**/		addUniform("lightPosition");
+/**/		addUniform("lightColour");
 		
 		addUniform("cameraPosition");
 		addUniform("scaleY");
@@ -67,6 +70,9 @@ public class TerrainShader extends Shader{
 	public void updateUniforms(GameObject object) {
 		
 		TerrainNode terrainNode = (TerrainNode) object;
+		
+/**/		setUniform("lightPosition", World.getInstance().getLight().getPosition());
+/**/		setUniform("lightColour", World.getInstance().getLight().getColour());
 		
 		setUniform("cameraPosition", Camera.getInstance().getPosition());
 		setUniformf("scaleY", terrainNode.getConfig().getScaleY());

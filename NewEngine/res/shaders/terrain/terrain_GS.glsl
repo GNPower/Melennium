@@ -17,8 +17,10 @@ in vec2 mapCoord_GS[];
 out vec2 mapCoord_FS;
 out vec3 position_FS;
 out vec3 tangent_FS;
+/**/out vec3 toLightVector_FS;
 
 uniform mat4 m_ViewProjection;
+/**/uniform vec3 lightPosition;
 uniform sampler2D normalmap;
 uniform sampler2D splatmap;
 uniform vec3 cameraPosition;
@@ -97,8 +99,9 @@ void main(){
 		mapCoord_FS = mapCoord_GS[i];
 		position_FS = (worldPos).xyz;
 		tangent_FS = tangent;
+/**/		toLightVector_FS = lightPosition - worldPos.xyz;
 		EmitVertex();
 	}
 	
-	EndPrimitive();
+	EndPrimitive();	
 }

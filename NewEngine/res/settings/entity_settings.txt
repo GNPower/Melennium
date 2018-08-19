@@ -1,0 +1,6 @@
+#player settings
+
+movement:
+direction_1 0.2
+direction_2 0.1
+direction_3 0.1

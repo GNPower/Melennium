@@ -9,14 +9,6 @@ import core.kernel.input.Input;
 import core.utils.Constants;
 import net.Client;
 
-/**
- * 
- * @author oreon3D
- * CoreEngine implements the game loop and manages window close requests.
- * On close request the CoreEngine ensures a clean shutdown of the
- * RenderingEngine and modules.
- *
- */
 public class CoreEngine {
 
 	private static int fps;
@@ -84,7 +76,7 @@ public class CoreEngine {
 				if(frameCounter >= Constants.NANOSECOND)
 				{
 					setFps(frames);
-					System.out.println("fps: " + frames);
+//					System.out.println("fps: " + frames);
 					frames = 0;
 					frameCounter = 0;
 				}

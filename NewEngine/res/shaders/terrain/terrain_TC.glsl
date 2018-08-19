@@ -46,5 +46,5 @@ void main(){
 	
 	mapCoord_TE[gl_InvocationID] = mapCoord_TC[gl_InvocationID];
 	
-	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;	
 }

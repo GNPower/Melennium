@@ -33,5 +33,5 @@ void main(){
 	
 	mapCoord_GS = mapCoord;
 	
-	 gl_Position = position;
+	 gl_Position = position;	 
 }

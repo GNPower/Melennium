@@ -142,5 +142,6 @@ void main(){
 	height = texture(heightmap, localPosition).r;
 	
 	mapCoord_TC = localPosition;
-	gl_Position = worldMatrix * vec4(localPosition.x, height, localPosition.y, 1);
+	vec4 worldPosition = worldMatrix * vec4(localPosition.x, height, localPosition.y, 1);
+	gl_Position = worldPosition;	
 }

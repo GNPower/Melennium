@@ -45,7 +45,7 @@ public class Server {
 			return;
 		}
 		
-		System.out.println("Started server on port 8192...");
+		System.out.println("Started server on port " + port + "...");
 		
 		listening = true;
 		
@@ -68,15 +68,8 @@ public class Server {
 			Iterator<ServerClient> iterator = list.iterator();
 			while(iterator.hasNext()) {
 				ServerClient client = iterator.next();
-				double diff = (System.nanoTime() / SECOND) - client.getLastConnectionConfirmation();
-//				System.out.println("diff: " + diff);
-				if(diff > 5.0) {
-//					System.out.println("client removed: " + client.username);
-					iterator.remove();
-					continue;
-				}else if(diff >= 2.0) {
-					send(new byte[] {0x40, 0x40, 0x03}, client.getAddress(), client.getPort());
-				}
+				
+				//TODO: implement timeout functionality
 
 				if(!client.isSet)
 					continue;
@@ -128,6 +121,7 @@ public class Server {
 			case 0x01:
 				System.out.println("Received connection packet");
 				Address addressID = new Address(address, port);
+				System.out.println("Packet from address " + addressID.getId());
 				clients.put(addressID.getId(), new ServerClient(addressID));
 				clients.get(addressID.getId()).confirmConnection(System.nanoTime() / SECOND);
 				send(new byte[] {0x40, 0x40, 0x01}, address, port);
@@ -152,6 +146,7 @@ public class Server {
 		switch(name){
 		case "playerID":
 			dump(database);
+			System.out.println("ID from address " + addressID);
 			clients.get(addressID).setPlayerID(database);
 			System.out.println("Received Player ID!");
 			System.out.println("Connected Clients By Username Are:");
@@ -164,6 +159,7 @@ public class Server {
 		case "playerUD":
 			if(clients.get(addressID) == null)
 				return;
+//			System.out.println("update caught");
 			clients.get(addressID).update(database);
 			break;
 		}

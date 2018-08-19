@@ -15,6 +15,7 @@ public class Camera {
 	private static Camera instance = null;
 
 	private final Vec3f yAxis = new Vec3f(0,1,0);
+	private final Vec3f zAxis = new Vec3f(0,0,1);
 	
 	private Vec3f position;
 	private Vec3f previousPosition;
@@ -53,9 +54,7 @@ public class Camera {
 	private Entity trackedEntity;
 	private boolean trackEntity;
 	
-	private float distanceFromPlayer = 50;
-	private float yaw;
-	private float angleAroundPlayer = 0;
+	private float distanceFromPlayer = 0;
 	
 	public static Camera getInstance() 
 	{
@@ -88,17 +87,12 @@ public class Camera {
 	
 	public void update()
 	{
-		if(Input.getInstance().isKeyPushed(Keys.KEY_C)) {
-			if(trackEntity) {
-				trackEntity = false;
-			}else {
-				trackEntity = true;
-			}
-		}
 		if(trackEntity)
 			trackEntity();
 		else
 			moveIndividually();
+		
+		trackedEntity.setPosition(position);
 	}
 	
 	private void moveIndividually() {
@@ -135,6 +129,7 @@ public class Camera {
 		// free mouse rotation
 		if(Input.getInstance().isButtonPushed(2))
 		{
+			System.out.println("pushed");
 			float dy = Input.getInstance().getLockedCursorPosition().getY() - Input.getInstance().getCursorPosition().getY();
 			float dx = Input.getInstance().getLockedCursorPosition().getX() - Input.getInstance().getCursorPosition().getX();
 			
@@ -222,6 +217,11 @@ public class Camera {
 	
 	private void trackEntity() {
 		
+		if(distanceFromPlayer > 0) {
+			
+		}else {
+			moveIndividually();
+		}
 	}
 	
 	public void move(Vec3f dir, float amount)

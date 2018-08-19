@@ -39,7 +39,7 @@ public class ServerClient {
 	}
 	
 	public void update(MSDatabase database){
-		MSObject object = database.findObject("Player");
+		MSObject object = database.findObject(username);
 		positions = object.findArray("positions").floatData;
 		rotations = object.findArray("rotations").floatData;
 	}
