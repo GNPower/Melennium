@@ -1,0 +1,11 @@
+Version 1.0.0 - Alpha 1.0.0
+-linearly decreasing sky function for static skydome
+-tesselated terrain quadtree with displacement and normal mapping
+-splatmapping support for terrain
+-universal lights
+-basic textured entities
+-diffuse lighting for entire scene
+-specular ligthing for entities only
+-basic player-only multiplayer support
+-light directional dependant fog
+

@@ -7,17 +7,18 @@ public class Material{
 	
 	private String name;
 	private Texture2D diffusemap;
-	private Texture2D normalmap;
-	private Texture2D displacemap;
-	private Texture2D ambientmap;
-	private Texture2D specularmap;
-	private Texture2D alphamap;
-	private Vec3f color;
-	private float alpha;
-	private float displaceScale;
-	private float horizontalScale;
-	private float emission;
-	private float shininess;
+	private boolean overrideModelTexture = false;
+	private Texture2D normalmap = null;
+	private Texture2D displacemap = null;
+	private Texture2D ambientmap = null;
+	private Texture2D specularmap = null;
+	private Texture2D alphamap = null;
+	private Vec3f color = new Vec3f(0.1f,0.1f,1.0f);
+	private float alpha = 1;
+	private float displaceScale = 1;
+	private float horizontalScale = 1;
+	private float emission = 0;
+	private float reflectivity = 1;
 	
 	public Texture2D getDiffusemap() {
 		return diffusemap;
@@ -79,11 +80,11 @@ public class Material{
 	public void setEmission(float emission) {
 		this.emission = emission;
 	}
-	public float getShininess() {
-		return shininess;
+	public float getReflectivity() {
+		return reflectivity;
 	}
-	public void setShininess(float shininess) {
-		this.shininess = shininess;
+	public void setReflectivity(float shininess) {
+		this.reflectivity = shininess;
 	}
 	public String getName() {
 		return name;
@@ -96,5 +97,11 @@ public class Material{
 	}
 	public void setHorizontalScale(float horizontalScale) {
 		this.horizontalScale = horizontalScale;
+	}
+	public boolean shouldOverrideModelTexture() {
+		return overrideModelTexture;
+	}
+	public void setOverrideModelTexture(boolean overrideModelTexture) {
+		this.overrideModelTexture = overrideModelTexture;
 	}
 }

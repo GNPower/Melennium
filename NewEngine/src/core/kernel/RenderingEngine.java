@@ -18,7 +18,7 @@ public class RenderingEngine {
 	private Skydome skydome;
 	private Terrain terrain;
 	private Entity entity;
-	private Entity barrel;
+	private Entity barrel, barrel2;
 	
 	public RenderingEngine()
 	{
@@ -30,15 +30,18 @@ public class RenderingEngine {
 	public void init()
 	{
 		window.init();
-		World.getInstance().init();
+		World.getInstance().init(skydome);
 		
 		terrain.init("./res/settings/terrain_settings.txt");
+		World.getInstance().setTerrain(terrain);
 		
 		entity = new Entity("res/models/barrel/barrel.obj", "res/textures/barrel.png", new Vec3f(-180,105,-30), new Vec3f(0,0,0));
 		entity.setConfig(new EntityConfig("./res/settings/entity_settings.txt"));
 		entity.setShouldRender(false);
 		
 		barrel = new Entity("res/models/dragon/dragon.obj", "res/textures/cyan.png", new Vec3f(-180, 105, -30), new Vec3f(0,0,0));
+		barrel2 = new Entity("res/entities/barrel/barrel.cfg");
+		World.getInstance().addEntity(barrel2);
 		
 		Camera.getInstance().setTrakedEntity(entity);
 		
@@ -49,30 +52,33 @@ public class RenderingEngine {
 //		System.out.println("Theta is: " + theta);
 		
 		//CONNECT TO SERVER01 HERE:
-		client = new Client("localhost", 25565);
-			if(!client.connect(entity, username))
-				System.out.println("Failed to connect to server! Loading into local session");
+//		client = new Client("localhost", 25565);
+//			if(!client.connect(entity, username))
+//				System.out.println("Failed to connect to server! Loading into local session");
 	}
 
 	public void render()
 	{	
 		Default.clearScreen();
 		
-		skydome.render();
+//		skydome.render();
 		
-		terrain.updateQuadtree();
-		terrain.render();
-		entity.render();
-		barrel.render();
+//		terrain.updateQuadtree();
+//		terrain.render();
+//		entity.render();
+//		barrel.render();
+//		barrel2.render();
 //		System.out.println("entity pos:" + entity.getPosition().toString());
-		client.render();
+//		client.render();
+		World.getInstance().render();
 		// draw into OpenGL window
 		window.render();
 	}
 	
 	public void update(){
-		client.update(entity);
+//		client.update(entity);
 //		entity.move(new Vec3f(0,0.005f,0), new Vec3f(0,0,0));
+		barrel2.move(new Vec3f(0,0,0), new Vec3f(0,0.02f,0));
 		
 		//sets whether the engine should render in full or only wireframe
 		if(Input.getInstance().isKeyPushed(Keys.KEY_M)) {

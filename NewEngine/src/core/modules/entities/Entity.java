@@ -10,6 +10,7 @@ import core.buffers.VAO;
 import core.configs.Default;
 import core.kernel.RenderContext;
 import core.math.Vec3f;
+import core.model.Material;
 import core.model.Model;
 import core.renderer.RenderInfo;
 import core.renderer.Renderer;
@@ -28,9 +29,41 @@ public class Entity extends GameObject{
 	private Vec3f position, rotation;
 	private boolean shouldRender = true;
 	
+	public Entity(String entityFile) {
+		config = new EntityConfig(entityFile);
+		model = config.loadFile();
+		model.setMaterial(config.getMaterials()[0]);
+		position = config.getInitialPosition();
+		rotation = config.getInitialRotation();
+		
+		if(model.getMesh() == null) {
+			System.err.println("ererer");
+			System.exit(1);
+		}
+		
+		VAO vao = new VAO(model.getMesh());
+		
+		Renderer renderer = new Renderer();
+		renderer.setVAO(vao);
+		renderer.setInfo(new RenderInfo(new Default(), EntityShader.getInstance()));
+		
+		Renderer wireframeRenderer = new Renderer();
+		wireframeRenderer.setVAO(vao);
+		wireframeRenderer.setInfo(new RenderInfo(new Default(), EntityWireframeShader.getInstance()));
+		
+		addComponent(Constants.RenderComponents.RENDERER_COMPONENT, renderer);
+		addComponent(Constants.RenderComponents.WIREFRAME_RENDERER_COMPONENT, wireframeRenderer);
+		
+		getWorldTransform().setTranslation(position);
+		getWorldTransform().setRotation(rotation);
+		
+		entities.add(this);
+	}
+	
 	public Entity(String file, String texture, Vec3f position, Vec3f rotation) {
 		model = new Model(OBJLoader.loadObjModel(file));
 		model.setTexture(new Texture2D(texture));
+		model.setMaterial(new Material());
 		this.position = position;
 		this.rotation = rotation;
 		
@@ -104,9 +137,6 @@ public class Entity extends GameObject{
 		if(!shouldRender)
 			return;
 		
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getId());
-		
 		if(RenderContext.getInstance().isWireframe())
 			getComponents().get(Constants.RenderComponents.WIREFRAME_RENDERER_COMPONENT).render();
 		else
@@ -130,6 +160,10 @@ public class Entity extends GameObject{
 	
 	public static List<Entity> getEntities(){
 		return entities;
+	}
+	
+	public Model getModel() {
+		return model;
 	}
 
 	public Vec3f getPosition() {

@@ -8,6 +8,9 @@ out vec3 worldPosition;
 out vec2 texCoords;
 out vec3 surfaceNormal;
 out vec3 toLightVector;
+out vec3 toCameraVector;
+
+uniform sampler2D normalmap;
 
 uniform vec3 lightPosition;
 uniform mat4 m_MVP;
@@ -21,4 +24,5 @@ void main(){
 	
 	surfaceNormal = (m_World * vec4(normals, 0.0)).xyz;
 	toLightVector = lightPosition - worldPosition;
+	toCameraVector = (inverse(m_MVP) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
 }

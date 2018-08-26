@@ -1,5 +1,6 @@
 package core.modules.sky;
 
+import core.math.Matrix4f;
 import core.scene.GameObject;
 import core.shaders.Shader;
 import core.utils.ResourceLoader;
@@ -16,7 +17,7 @@ public class AtmosphereShader extends Shader{
 	
 	protected AtmosphereShader() {
 		super();
-		
+				
 		addVertexShader(ResourceLoader.loadShader("shaders/sky/atmosphere_VS.glsl"));
 		addFragmentShader(ResourceLoader.loadShader("shaders/sky/atmosphere_FS.glsl"));
 		compileShader();

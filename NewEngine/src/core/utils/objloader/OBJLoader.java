@@ -91,7 +91,7 @@ public class OBJLoader {
 							}
 							if(tokens[0].equals("Ns")){
 								if (tokens.length > 1)
-									materials.get(currentMtl).setShininess(Float.valueOf(tokens[1]));
+									materials.get(currentMtl).setReflectivity(Float.valueOf(tokens[1]));
 							}
 						}
 						mtlReader.close();
